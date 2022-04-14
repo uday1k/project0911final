@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <%- include('partials/head.ejs', {title:"Register User"}) %>
+</head>
+
+<body>
+
+    <!-- Main content -->
+    <section class="content">
+        <div class="container-fluid">
+            <div class="row">
+                <!-- left column -->
+                <div class="col-md-12">
+                    <!-- jquery validation -->
+                    <div class="card card-primary">
+                        <div class="card-header">
+                            <h3 class="card-title">Quick Example <small>jQuery Validation</small></h3>
+                        </div>
+                        <!-- /.card-header -->
+                        <!-- form start -->
+                        <form id="quickForm" action="/user/register" method="post">
+                            <div class="card-body">
+                                <span id="check_user_details_failedId" style="color:red ;"><%=checkFails%></span>
+                                <div class="form-group">
+                                    <label for="id_username">User Name</label>
+                                    <input type="text" name="user_username" class="form-control" id="id_usernamename" placeholder="Enter User Name">
+                                </div>
+                                <div class="form-group">
+                                    <label for="id_user_email">Email</label>
+                                    <input type="email" name="user_email" class="form-control" id="id_user_email" placeholder="Enter Email">
+                                </div>
+                                <div class="form-group">
+                                    <label for="id_user_password">Password</label>
+                                    <input type="password" name="user_password" class="form-control" id="id_user_password" placeholder="Enter Password">
+                                </div>
+                                <div class="form-group">
+                                    <label for="id_retype_userpass">Password</label>
+                                    <input type="password" name="user_retype_pass" class="form-control" id="id_retype_userpass" placeholder="Retype Password">
+                                </div>
+                                <div class="form-group mb-0">
+                                    <div class="custom-control custom-checkbox">
+                                        <input type="checkbox" name="terms" class="custom-control-input"
+                                            id="exampleCheck1">
+                                        <label class="custom-control-label" for="exampleCheck1">I agree to the <a href="#">terms of service</a>.</label>
+                                    </div>
+                                </div>
+
+                            </div>
+                            <!-- /.card-body -->
+                            <div class="card-footer">
+                                <button type="submit" class="btn btn-primary">Submit</button>
+                            </div>
+                        </form>
+                    </div>
+                    <!-- /.card -->
+                </div>
+                <!--/.col (left) -->
+
+                <!--/.col (right) -->
+            </div>
+            <!-- /.row -->
+        </div><!-- /.container-fluid -->
+    </section>
+
+
+
+
+    <%- include('partials/footscript.ejs') %>
+
+
+        <!-- Page specific script -->
+        <script>
+
+
+
+            $(function () {
+                $('#quickForm').validate({
+                    rules: {
+                        user_username:{
+                            required:true,
+                        },
+                        user_email:{
+                            required:true,
+                            email:true,
+                        },
+                        user_password:{
+                            required:true,
+                            minlength:8,
+                        },
+                        user_retype_pass:{
+                            required:true,
+                            equalTo:"#id_user_password",
+                        },
+                        terms: {
+                            required: true,
+                        },
+                    },
+                    messages: {
+                        user_username:{
+                            required:"Username required",
+                        },
+                        user_email:{
+                            required:"Email required",
+                            email:"Email format wrong",
+                        },
+                        user_password:{
+                            required:"password required",
+                            minlength:"password must be more than 8 characters",
+                        },
+                        user_retype_pass:{
+                            required:"retype password ",
+                            equalTo:"password mismatched",
+                        },
+                        terms: "Please accept our terms"
+                    },
+                    errorElement: 'span',
+                    errorPlacement: function (error, element) {
+                        error.addClass('invalid-feedback');
+                        element.closest('.form-group').append(error);
+                    },
+                    highlight: function (element, errorClass, validClass) {
+                        $(element).addClass('is-invalid');
+                    },
+                    unhighlight: function (element, errorClass, validClass) {
+                        $(element).removeClass('is-invalid');
+                    }
+                });
+            });
+        </script>
+
+
+</body>
+
+</html>

@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <%- include('partials/head.ejs', {title:"Admin Companies"}) %>
+</head>
+<body>
+    <%- include('partials/adminNavbar.ejs',{pageName:"companyTables"}) %>
+
+
+
+
+
+
+    <!--Registered Companies Main content -->
+    <section class=" content">
+        <div class="container-fluid">
+          <div class="row">
+            <div class="col-12">
+              <div class="card">
+    
+                <!-- /.card-header -->
+                <div class="card-body">
+                  <table id="example10" class="table table-bordered table-hover">
+                    <thead>
+                      <tr>
+                        <th>Company Id</th>
+                        <th>Company Name</th>
+                        <th>DateTime of Company Registered</th>
+                        <th>Current Status</th>
+                        <th>Change State</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <%for (var i=0; i <companyList.length; i++ ){%>
+                        <tr>
+                          <td><%=companyList[i].companyId%></td>
+                          <td><%=companyList[i].companyName%></td>
+                          <td><%=companyList[i].registeredOnDateTime%></td>
+                          <td><%=companyList[i].status%></td>
+                          <%if(companyList[i].status=="pending"){%>
+                            <td><div class="dropdown">
+                                <button class="btn btn-outline-primary dropdown-toggle btn-block" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                  Accept/Reject
+                                </button>
+                                <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                    <form action="/company/register/accepted/<%=companyList[i]._id%>" method="post"><input type="submit" class="dropdown-item" value="Accept"></form>
+                                    <form action="/company/register/rejected/<%=companyList[i]._id%>" method="post"><input type="submit" class="dropdown-item" value="Reject"></form>
+                                </div>
+                              </div></td>
+                            <%}else if(companyList[i].status=="accepted"){%>
+                              <td><form action="/company/register/rejected/<%=companyList[i]._id%>" method="post"><input type="submit" class="btn btn-outline-primary btn-block" value="Reject"></form></td>
+                              <%}else{%>
+                                <td><form action="/company/register/accepted/<%=companyList[i]._id%>" method="post"><input type="submit" class="btn btn-outline-primary btn-block" value="Accept"></form></td>
+                              <%}%>
+                        </tr>
+                        <% } %>
+                    </tbody>
+                    <tfoot>
+                      <tr>
+                        <th>Company Id</th>
+                        <th>Company Name</th>
+                        <th>DateTime of Company Registered</th>
+                        <th>Current Status</th>
+                        <th>Change State</th>
+                      </tr>
+                    </tfoot>
+                  </table>
+                </div>
+                <!-- /.card-body -->
+              </div>
+              <!-- /.card -->
+    
+              <!-- /.card -->
+            </div>
+            <!-- /.col -->
+          </div>
+          <!-- /.row -->
+        </div>
+        <!-- /.container-fluid -->
+      </section>
+        
+        
+<script>
+    $(function () {
+          $("#example9").DataTable({
+            "responsive": true, "lengthChange": false, "autoWidth": false,
+            "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"]
+          }).buttons().container().appendTo('#example7_wrapper .col-md-6:eq(0)');
+          $('#example10').DataTable({
+            "paging": true,
+            "lengthChange": false,
+            "searching": false,
+            "ordering": true,
+            "info": true,
+            "autoWidth": false,
+            "responsive": true,
+          });
+        });
+</script>  
+
+
+
+
+    <%- include('partials/footscript.ejs') %>   
+</body>
+</html>

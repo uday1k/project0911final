@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+  
+  <%- include('partials/head.ejs', {title:"Insert Job Detatils"}) %>
+  
+  
+
+  
+  
+</head>
+
+<body>
+
+  <!-- Main content -->
+  <section class="content">
+    <div class="container-fluid">
+      <div class="row">
+        <!-- left column -->
+        <div class="col-md-12">
+          <!-- jquery validation -->
+          <div class="card card-primary">
+            <div class="card-header">
+              <h3 class="card-title">Quick Example <small>jQuery Validation</small></h3>
+            </div>
+            <!-- /.card-header -->
+            <!-- form start -->
+            <form id="quickForm" action="/company/savejob" method="post">
+              <div class="card-body">
+                <div class="form-group">
+                  <label for="iddept">Job Department</label>
+                  <select name="jobdept" class="form-control custom-select custom-select-md" id="iddept">
+                    <option value="not selected">Click to select from Dropdown</option>
+                    <% for(var i=0;i<typesOfDepts.length;i++){%>
+                      <option value="<%=typesOfDepts[i].departmentName%>"><%=typesOfDepts[i].departmentName%></option>
+                      <%}%>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label for="idrole">Job Role</label>
+                  <select name="jobrole" class="form-control custom-select custom-select-md" id="idrole">
+                    <option value="not selected">Click to select from Dropdown</option>
+                    <% for(var i=0;i<typesOfRoles.length;i++){%>
+                      <option value="<%=typesOfRoles[i].roleName%>"><%=typesOfRoles[i].roleName%></option>
+                      <%}%>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label for="idqual">Job Qualification Required</label>
+                  <select name="jobqual" class="form-control custom-select custom-select-md" id="idqual">
+                    <option value="not selected">Click to select from Dropdown</option>
+                    <% for(var i=0;i<quals.length;i++){%>
+                      <option value="<%=quals[i].qualificationName%>"><%=quals[i].qualificationName%></option>
+                      <%}%>
+                  </select>
+                </div>
+
+
+
+                <div class="form-group">
+                  <label for="iddes">Description</label>
+                  <textarea  name="jobdes" class="form-control" id="iddes" placeholder="Enter Description about the job"></textarea>
+                </div>
+
+                <div class="form-group">
+                  <label for="idskillsrequied">Skills Required</label>
+                  <select  name="jobskillsrequired" class="form-control custom-select"   id="idskillsrequired" multiple>
+                    <% for(var i=0;i<typesOfSkills.length;i++){%>
+                      <option value="<%=typesOfSkills[i].skillName%>"><%=typesOfSkills[i].skillName%></option>
+                      <%}%>
+                  </select>
+                </div>
+                
+                <div class="form-group">
+                  <label for="idexp">Experience required</label>
+                  <input type="text" name="jobexp" class="form-control" id="idexp" placeholder="Enter in Years">
+                </div>
+                <div class="form-group">
+                  <label for="iddatetime">Last Date and time to apply</label>
+                  <input type="datetime-local" name="jobdatetime" class="form-control" id="iddatetime" placeholder="pick datetime in local">
+                </div>
+                <div class="form-group">
+                  <label for="idctc">CTC offered</label>
+                  <input type="text" name="jobctc" class="form-control" id="idctc" placeholder="Enter in Lakhs">
+                </div>
+                <div class="form-group mb-0">
+                  <div class="custom-control custom-checkbox">
+                    <input type="checkbox" name="terms" class="custom-control-input" id="exampleCheck1">
+                    <label class="custom-control-label" for="exampleCheck1">I agree to the <a href="#">terms of service</a>.</label>
+                  </div>
+                </div>
+
+              </div>
+              <!-- /.card-body -->
+              <div class="card-footer">
+                <button type="submit" class="btn btn-primary">Submit</button>
+                <a class="btn btn-primary" href="/">Cancel</a>
+              </div>
+            </form>
+          </div>
+          <!-- /.card -->
+        </div>
+        <!--/.col (left) -->
+
+        <!--/.col (right) -->
+      </div>
+      <!-- /.row -->
+    </div><!-- /.container-fluid -->
+  </section>
+
+  
+
+
+  <%- include('partials/footscript.ejs') %>
+
+
+
+   <!-- Page specific script -->
+<script>
+  
+
+        jQuery.validator.addMethod("notselectedoption", function (value, element) {
+      return this.optional(element) || value!="not selected";
+    }, 'Please select by clicking dropdown.');
+
+    
+    jQuery.validator.addMethod("datetimeslectiongt", function (value, element) {
+      let todayDateTime=new Date();
+      todayDateTime.setHours(todayDateTime.getHours() + 24);
+      return this.optional(element) || ((Date.parse(value)-Date.parse(todayDateTime))>0);
+    }, 'Please select date time greater than currrent date time with a gap of 24Hours.');
+
+  $(function () {
+    $('#quickForm').validate({
+      rules: {
+        jobdept: {
+          notselectedoption: true,
+        },
+        jobrole: {
+          notselectedoption: true,
+        },
+        jobdes: {
+          required: true,
+        },
+        jobexp: {
+          required: true,
+          number:true,
+        },
+        jobdatetime:{
+          required:true,
+          datetimeslectiongt:true,
+        },
+        jobctc: {
+          required: true,
+          number:true,
+        },
+        terms: {
+          required: true
+        },
+      },
+      messages: {
+        jobdept: {
+          notselectedoption: "please select department from dropdown",
+        },
+        jobrole: {
+          notselectedoption: "please select job role from dropdown",
+        },
+        jobdes: {
+          required: "Please Enter Description about Job"
+        },
+        jobexp: {
+          required: "Please provide a job experience",
+          number:"Enter only Number"
+        },
+        jobdatetime:{
+          required:"Please select DateTime",
+          datetimeslectiongt:"date and time should be  atleast 1 Day with respective to Current Datetime",
+        },
+        jobctc: {
+          required: "Enter CTC",
+          number:"Enter in Numbers Only",
+        },
+        terms: "Please accept our terms"
+      },
+      errorElement: 'span',
+      errorPlacement: function (error, element) {
+        error.addClass('invalid-feedback');
+        element.closest('.form-group').append(error);
+      },
+      highlight: function (element, errorClass, validClass) {
+        $(element).addClass('is-invalid');
+      },
+      unhighlight: function (element, errorClass, validClass) {
+        $(element).removeClass('is-invalid');
+      }
+    });
+  });
+  </script>
+
+
+</body>
+
+</html>

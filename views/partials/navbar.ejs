@@ -1,0 +1,87 @@
+<nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+  <a class="navbar-brand" href="/"> <img class="bg-light"src="dist/img/logojob.png" width="30" height="30"
+          class="d-inline-block align-top" alt="">
+       Jobs Posting Portal</a>
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+      aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+  </button>
+
+  <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav mr-auto">
+        <%if(pageName==='home'){%>
+          <li class="nav-item active">
+              <a class="nav-link" href="/">Home</a>
+          </li>
+          <%}else{%>
+            <li class="nav-item">
+              <a class="nav-link" href="/">Home</a>
+          </li>
+          <%}%>
+          <%if(pageName==='courses'){%>
+            <li class="nav-item active">
+              <a class="nav-link" href="/courses">Courses</a>
+          </li>
+            <%}else{%>
+              <li class="nav-item">
+                <a class="nav-link" href="/courses">Courses</a>
+            </li>
+            <%}%>
+      </ul>
+      <ul class="navbar-nav">
+        
+        <%if(!(locals.auth)){%>
+
+                              <%if(pageName!='login'){%>
+                            <li class="nav-item">
+                              <div class="dropdown">
+                                <button class="btn btn-light dropdown-toggle mr-5" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                  Login/Signup
+                                </button>
+                                <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                  <a class="dropdown-item" href="/login">Login</a>
+                                  <a class="dropdown-item" href="/user/register">Register</a>
+                                  <a class="dropdown-item" href="/company/register">Register as Company</a>
+                                </div>
+                              </div>
+                          </li>
+                          <%}else{%>
+                            <li class="nav-item">
+                              <div class="dropdown">
+                                <button class="btn btn-light dropdown-toggle mr-5" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                  Don't You have an Account?
+                                </button>
+                                <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                  <a class="dropdown-item" href="/user/register">Register</a>
+                                  <a class="dropdown-item" href="/company/register">Register as Company</a>
+                                </div>
+                              </div>
+                          </li> 
+                            <%}%>
+
+          <%} else if(locals.role==="company"){%>
+            <li class="nav-item mr-2">
+              <a href="/company/insertjob" role="button" class="btn btn-light">Post Job</a>
+          </li>
+            <li class="nav-item mr-2">
+              <a href="/logout" role="button" class="btn btn-light">Logout</a>
+          </li>
+          
+
+          <%} else if(locals.role==="user"){%>
+            <li class="nav-item mr-2">
+              <a href="/logout" role="button" class="btn btn-light">Logout</a>
+          </li>
+            
+          <%}else if(locals.role==="admin"){%>
+            <li class="nav-item mr-2">
+              <a href="/admin" role="button" class="btn btn-outline-light">Admin Portal</a>
+          </li>
+          <li class="nav-item mr-2">
+            <a href="/logout" role="button" class="btn btn-outline-light">Logout</a>
+        </li>
+          <%}%>
+                      
+    </ul>
+  </div>
+</nav>

@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <%- include('partials/head.ejs', {title:"Register company"}) %>
+</head>
+
+<body>
+    <!-- Main content -->
+    <section class="content">
+        <div class="container-fluid">
+            <div class="row">
+                <!-- left column -->
+                <div class="col-md-12">
+                    <!-- jquery validation -->
+                    <div class="card card-primary">
+                        <div class="card-header">
+                            <h3 class="card-title">Quick Example <small>jQuery Validation</small></h3>
+                        </div>
+                        <!-- /.card-header -->
+                        <!-- form start -->
+                        <form id="quickForm" action="/company/register" method="post">
+                            <div class="card-body">
+                                <span id="check_company_details_failedId" style="color:red ;"><%=checkFails%></span>
+                                <div class="form-group">
+                                    <label for="id_company_name">Company Name</label>
+                                    <input type="text" name="comp_company_name" class="form-control" id="id_company_name" placeholder="Enter Company Name">
+                                </div>
+                                <div class="form-group">
+                                    <label for="id_email">Email</label>
+                                    <input type="email" name="comp_email" class="form-control" id="id_email" placeholder="Enter Email">
+                                </div>
+                                <div class="form-group">
+                                    <label for="id_password">Password</label>
+                                    <input type="password" name="comp_password" class="form-control" id="id_password" placeholder="Enter Password">
+                                </div>
+                                <div class="form-group">
+                                    <label for="id_retype_pass">Password</label>
+                                    <input type="password" name="comp_retype_pass" class="form-control" id="id_retype_pass" placeholder="Retype Password">
+                                </div>
+                                <div class="form-group mb-0">
+                                    <div class="custom-control custom-checkbox">
+                                        <input type="checkbox" name="terms" class="custom-control-input"
+                                            id="exampleCheck1">
+                                        <label class="custom-control-label" for="exampleCheck1">I agree to the <a href="#">terms of service</a>.</label>
+                                    </div>
+                                </div>
+
+                            </div>
+                            <!-- /.card-body -->
+                            <div class="card-footer">
+                                <button type="submit" class="btn btn-primary">Submit</button>
+                            </div>
+                        </form>
+                    </div>
+                    <!-- /.card -->
+                </div>
+                <!--/.col (left) -->
+
+                <!--/.col (right) -->
+            </div>
+            <!-- /.row -->
+        </div><!-- /.container-fluid -->
+    </section>
+
+
+
+
+    <%- include('partials/footscript.ejs') %>
+
+
+        <!-- Page specific script -->
+        <script>
+
+
+
+            $(function () {
+                $('#quickForm').validate({
+                    rules: {
+                        comp_company_name:{
+                            required:true,
+                        },
+                        comp_email:{
+                            required:true,
+                            email:true,
+                        },
+                        comp_password:{
+                            required:true,
+                            minlength:8,
+                        },
+                        comp_retype_pass:{
+                            required:true,
+                            equalTo:"#id_password"
+                        },
+                        terms: {
+                            required: true
+                        },
+                    },
+                    messages: {
+                        comp_company_name:{
+                            required:"Please Enter Company Name",
+                        },
+                        comp_email:{
+                            required:"Please Enter Email",
+                            email:"Email Format Wrong.",
+                        },
+                        comp_password:{
+                            required:"Enter Password",
+                            minlength:"Enter Atleast 8 Characters",
+                        },
+                        comp_retype_pass:{
+                            required:"Enter Password Again",
+                            equalTo:"password mismatched."
+                        },
+                        terms: "Please accept our terms"
+                    },
+                    errorElement: 'span',
+                    errorPlacement: function (error, element) {
+                        error.addClass('invalid-feedback');
+                        element.closest('.form-group').append(error);
+                    },
+                    highlight: function (element, errorClass, validClass) {
+                        $(element).addClass('is-invalid');
+                    },
+                    unhighlight: function (element, errorClass, validClass) {
+                        $(element).removeClass('is-invalid');
+                    }
+                });
+            });
+        </script>
+
+
+</body>
+
+</html>

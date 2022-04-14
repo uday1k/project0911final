@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <%- include('partials/head.ejs', {title:"add Options "}) %>
+</head>
+<body>
+  
+  <%- include('partials/adminNavbar.ejs',{pageName:"addOptions"}) %>
+  
+
+  
+    
+
+
+    <!--Skill  Main content -->
+    <section class=" content">
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-12">
+          <div class="card">
+
+            <!-- /.card-header -->
+            <div class="card-body">
+              <table id="example2" class="table table-bordered table-hover">
+                <thead>
+                  <tr>
+                    <th>S.no</th>
+                    <th>Skill Name</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <%for (var i=0; i <typesOfSkills.length; i++ ){%>
+                    <tr>
+                      <td><%=i+1%></td>
+                      <td><%=typesOfSkills[i].skillName%></td>
+                    </tr>
+
+                    <% } %>
+                </tbody>
+                <tfoot>
+                  <tr>
+                    <th>S.no</th>
+                    <th>Skill Name</th>
+                  </tr>
+                </tfoot>
+              </table>
+              <form action="/admin/add/skill" method="post">
+                <div class="row">
+                  <div class="form-group col-md-3">
+                    <input type="text" name="skillname" class="form-control" id="idskill" placeholder="Enter skill" required>
+                  </div>
+                  <div class="form-group col-md-3">
+                    <button class="btn btn-primary" type="submit">Add New skill</button>
+                  </div>
+                </div>
+              </form>
+
+            </div>
+            <!-- /.card-body -->
+          </div>
+          <!-- /.card -->
+
+
+          <!-- /.card -->
+        </div>
+        <!-- /.col -->
+      </div>
+      <!-- /.row -->
+    </div>
+    <!-- /.container-fluid -->
+    </section>
+   
+
+
+
+    <!--Role Main content -->
+    <section class=" content">
+      <div class="container-fluid">
+        <div class="row">
+          <div class="col-12">
+            <div class="card">
+  
+              <!-- /.card-header -->
+              <div class="card-body">
+                <table id="example4" class="table table-bordered table-hover">
+                  <thead>
+                    <tr>
+                      <th>S.no</th>
+                      <th>Role Name</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <%for (var i=0; i <typesOfRoles.length; i++ ){%>
+                      <tr>
+                        <td><%=i+1%></td>
+                        <td><%=typesOfRoles[i].roleName%></td>
+                      </tr>
+  
+                      <% } %>
+                  </tbody>
+                  <tfoot>
+                    <tr>
+                      <th>S.no</th>
+                      <th>Role Name</th>
+                    </tr>
+                  </tfoot>
+                </table>
+                <form action="/admin/add/role" method="post">
+                  <div class="row">
+                    <div class="form-group col-md-3">
+                      <input type="text" name="rolename" class="form-control" id="idrole" placeholder="Enter Role" required>
+                    </div>
+                    <div class="form-group col-md-3">
+                      <button class="btn btn-primary" type="submit">Add New Role</button>
+                    </div>
+                  </div>
+                </form>
+  
+              </div>
+              <!-- /.card-body -->
+            </div>
+            <!-- /.card -->
+  
+            <!-- /.card -->
+          </div>
+          <!-- /.col -->
+        </div>
+        <!-- /.row -->
+      </div>
+      <!-- /.container-fluid -->
+      </section>
+
+
+
+
+
+
+
+
+
+    <!--Department Main content -->
+    <section class=" content">
+      <div class="container-fluid">
+        <div class="row">
+          <div class="col-12">
+            <div class="card">
+  
+              <!-- /.card-header -->
+              <div class="card-body">
+                <table id="example6" class="table table-bordered table-hover">
+                  <thead>
+                    <tr>
+                      <th>S.no</th>
+                      <th>Department Name</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <%for (var i=0; i <typesOfDepts.length; i++ ){%>
+                      <tr>
+                        <td><%=i+1%></td>
+                        <td><%=typesOfDepts[i].departmentName%></td>
+                      </tr>
+  
+                      <% } %>
+                  </tbody>
+                  <tfoot>
+                    <tr>
+                      <th>S.no</th>
+                      <th>Department Name</th>
+                    </tr>
+                  </tfoot>
+                </table>
+                <form action="/admin/add/department" method="post">
+                  <div class="row">
+                    <div class="form-group col-md-3">
+                      <input type="text" name="departmentname" class="form-control" id="iddepartment" placeholder="Enter Department" required>
+                    </div>
+                    <div class="form-group col-md-3">
+                      <button class="btn btn-primary" type="submit">Add New Department</button>
+                    </div>
+                  </div>
+                </form>
+  
+              </div>
+              <!-- /.card-body -->
+            </div>
+            <!-- /.card -->
+  
+            <!-- /.card -->
+          </div>
+          <!-- /.col -->
+        </div>
+        <!-- /.row -->
+      </div>
+      <!-- /.container-fluid -->
+    </section>
+
+
+
+    <!--Qualification Main content -->
+    <section class=" content">
+      <div class="container-fluid">
+        <div class="row">
+          <div class="col-12">
+            <div class="card">
+  
+              <!-- /.card-header -->
+              <div class="card-body">
+                <table id="example8" class="table table-bordered table-hover">
+                  <thead>
+                    <tr>
+                      <th>S.no</th>
+                      <th>Qualification</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <%for (var i=0; i <quals.length; i++ ){%>
+                      <tr>
+                        <td><%=i+1%></td>
+                        <td><%=quals[i].qualificationName%></td>
+                      </tr>
+                      <% } %>
+                  </tbody>
+                  <tfoot>
+                    <tr>
+                      <th>S.no</th>
+                      <th>Qualification</th>
+                    </tr>
+                  </tfoot>
+                </table>
+                <form action="/admin/add/qualification" method="post">
+                  <div class="row">
+                    <div class="form-group col-md-3">
+                      <input type="text" name="qualificationname" class="form-control" id="idqualification" placeholder="Enter Qualification" required>
+                    </div>
+                    <div class="form-group col-md-3">
+                      <button class="btn btn-primary" type="submit">Add New Qualification</button>
+                    </div>
+                  </div>
+                </form>
+              </div>
+              <!-- /.card-body -->
+            </div>
+            <!-- /.card -->
+  
+            <!-- /.card -->
+          </div>
+          <!-- /.col -->
+        </div>
+        <!-- /.row -->
+      </div>
+      <!-- /.container-fluid -->
+    </section>
+
+
+
+
+
+
+
+
+
+
+
+
+    <%- include('partials/footscript.ejs') %>
+
+
+      <script>
+
+
+        $(function () {
+          $("#example1").DataTable({
+            "responsive": true, "lengthChange": false, "autoWidth": false,
+            "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"]
+          }).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
+          $('#example2').DataTable({
+            "paging": true,
+            "lengthChange": false,
+            "searching": false,
+            "ordering": true,
+            "info": true,
+            "autoWidth": false,
+            "responsive": true,
+          });
+        });
+
+
+
+        $(function () {
+          $("#example3").DataTable({
+            "responsive": true, "lengthChange": false, "autoWidth": false,
+            "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"]
+          }).buttons().container().appendTo('#example3_wrapper .col-md-6:eq(0)');
+          $('#example4').DataTable({
+            "paging": true,
+            "lengthChange": false,
+            "searching": false,
+            "ordering": true,
+            "info": true,
+            "autoWidth": false,
+            "responsive": true,
+          });
+        });
+
+
+
+        $(function () {
+          $("#example5").DataTable({
+            "responsive": true, "lengthChange": false, "autoWidth": false,
+            "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"]
+          }).buttons().container().appendTo('#example5_wrapper .col-md-6:eq(0)');
+          $('#example6').DataTable({
+            "paging": true,
+            "lengthChange": false,
+            "searching": false,
+            "ordering": true,
+            "info": true,
+            "autoWidth": false,
+            "responsive": true,
+          });
+        });
+
+        $(function () {
+          $("#example7").DataTable({
+            "responsive": true, "lengthChange": false, "autoWidth": false,
+            "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"]
+          }).buttons().container().appendTo('#example7_wrapper .col-md-6:eq(0)');
+          $('#example8').DataTable({
+            "paging": true,
+            "lengthChange": false,
+            "searching": false,
+            "ordering": true,
+            "info": true,
+            "autoWidth": false,
+            "responsive": true,
+          });
+        });
+
+
+
+      </script>
+</body>
+
+</html>
