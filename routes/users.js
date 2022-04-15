@@ -79,17 +79,6 @@ router.post('/register/:id?', function (req, res) {
     res.send('error no id but there is type');
 
   }
-  else {
-    // async function asUpdtStatusFunc(){
-    //     await dbo.collection('Users').updateOne({ "_id": ObjectId(id)},{$set:{}},function(err,resultOfUpdt){ 
-    //         console.log(type);
-    //         console.log(resultOfUpdt);
-    //         res.redirect('/admin/companylist')
-    //     })
-    // }
-    // asUpdtStatusFunc();
-
-  }
 
 })
 

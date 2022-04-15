@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
-var test = require('../app')
-
+var test = require('../app');
+var createError=require('http-errors');
 
 var dbo;
 const MongoClient = require('mongodb').MongoClient;
@@ -11,6 +11,17 @@ MongoClient.connect(url, function (err, db) {
   dbo = db.db("onlinejob");
 });
 
+router.use((req, res, next) => {
+  if (!(req.session.auth)) {
+    res.render("loginpag", { "loginCheckDet": "Session Expired! Login Again", "colorOfSpan": true });
+  }
+  else if(req.session.role === "admin") {
+    next();
+  }
+  else{
+    return next(createError(403, 'Only authorized user can view this page.'))
+  }
+})
 
 router.get('/',function(req,res){
   

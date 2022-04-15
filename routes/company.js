@@ -1,5 +1,6 @@
 const express = require('express');
 const router = express.Router();
+var createError = require('http-errors');
 var app = require('../app')
 const bcrypt = require('bcrypt');
 const saltRounds = 10;
@@ -11,6 +12,21 @@ MongoClient.connect(url, function (err, db) {
   if (err) throw err;
   dbo = db.db("onlinejob");
 });
+
+
+
+const checkCompanyAuth=(req, res, next) => {
+  if (!(req.session.auth)) {
+    res.render("loginpag", { "loginCheckDet": "Session Expired! Login Again", "colorOfSpan": true });
+  }
+  else if(req.session.role === "company") {
+    next();
+  }
+  else{
+    return next(createError(403, 'Only authorized user can view this page.'))
+  }
+}
+
 
 router.get('/', function (req, res) {
 
@@ -111,7 +127,7 @@ router.post('/register/:type?/:id?', function (req, res) {
 })
 
 
-router.get('/insertjob', function (req, res) {
+router.get('/insertjob',checkCompanyAuth, function (req, res) {
 
   let jobDetails = {};
 

@@ -102,18 +102,6 @@ const checkAuth = function (req, res, next) {
 }
 
 
-const checkAdminAuth = function (req, res, next) {
-  if (!(req.session.auth)) {
-    res.render("loginpag", { "loginCheckDet": "Session Expired! Login Again", "colorOfSpan": true });
-  }
-  else if(req.session.role === "admin") {
-    next();
-  }
-  else{
-    res.render("loginpag", { "loginCheckDet": "Your not Authorized User to see this page! Please login as Admin.", "colorOfSpan": true });
-  }
-}
-
 
 
 
@@ -184,5 +172,6 @@ app.use(function (err, req, res, next) {
   res.render('error');
 });
 
-//exports.simplemessage = get();
+
+
 module.exports = {app:app};
