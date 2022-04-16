@@ -99,7 +99,7 @@ async function asCredValidateFunc() {
         res.locals.auth=req.session.auth=true;
         res.locals.role=req.session.role="admin";
         req.flash('checkFlash','succesfully loggedIn');
-        res.redirect('/admin');
+        res.send("formSubmitted")
       }
       else{
         res.send("incorrectPassword")
@@ -117,7 +117,7 @@ async function asCredValidateFunc() {
                   res.locals.role=req.session.role="company";
                   res.locals.companyName=req.session.companyName=result[1].companyName;
                   req.flash('checkFlash','succesfully loggedIn');
-                  res.redirect('/');
+                  res.send("formSubmitted")
                 }
                 else{
                   res.send("incorrectPassword")
@@ -132,7 +132,7 @@ async function asCredValidateFunc() {
         res.locals.auth=req.session.auth=true;
         res.locals.role=req.session.role="user";
         req.flash('checkFlash','succesfully loggedIn');
-        res.redirect('/');
+        res.send("formSubmitted")
       }
       else{
         res.send("incorrectPassword")
