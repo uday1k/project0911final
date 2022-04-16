@@ -188,7 +188,7 @@ router.post('/savejob', function (req, res) {
   async function asFuncInsertJobDetails() {
     await dbo.collection("jobsDetails").insertOne(insertJobDetails, function (err, resultToCheckDetailsInserted) {
       if (err) throw err;
-      console.log(resultToCheckDetailsInserted)
+      req.flash('checkFlash','Job Successfully Published');
       res.redirect("/");
     })
   }

@@ -1,4 +1,4 @@
-<%if(sucessfullyRegisteredCheck[0]==='succesfully loggedIn'){ %>
+<%if(flashesValues[0]==='succesfully loggedIn'){%>
     <div class="d-flex justify-content-center mt-2">
         <div class="w-25 d-flex justify-content-center alert alert-success alert-dismissible">
             <button type="button" class="close" data-dismiss="alert">&times;</button>
@@ -7,11 +7,12 @@
     </div>
     <%}%>
 
-<%if(sucessfullyRegisteredCheck[0]==='succesfully Logout'){ %>
-    <div class="d-flex justify-content-center mt-2">
-        <div class="w-25 d-flex justify-content-center alert alert-success alert-dismissible">
-            <button type="button" class="close" data-dismiss="alert">&times;</button>
-            <strong>Login Success!</strong>
+    <%if(flashesValues[0]==='Job Successfully Published'){%>
+        <div class="d-flex justify-content-center mt-2">
+            <div class="w-25 d-flex justify-content-center alert alert-success alert-dismissible">
+                <button type="button" class="close" data-dismiss="alert">&times;</button>
+                <strong>Job Successfully Published!</strong>
+            </div>
         </div>
-    </div>
-<%}%>
+        <%}%>
+    

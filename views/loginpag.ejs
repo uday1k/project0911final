@@ -18,6 +18,27 @@
               <!-- form start -->
               <form id="quickForm" action="/validatelogin" method="post">
                 <div class="card-body">
+                 <div id="email_exist_id" style="display: none;">
+                      <div class="d-flex justify-content-center mt-2">
+                        <div class="w-25 d-flex justify-content-center alert alert-danger">
+                            <strong>Email Not Found!</strong>
+                        </div>
+                      </div>
+                  </div>
+                  <div id="incorrect_password_id" style="display: none;">
+                    <div class="d-flex justify-content-center mt-2">
+                      <div class="w-25 d-flex justify-content-center alert alert-danger">
+                          <strong>Incorrect Password!</strong>
+                      </div>
+                    </div>
+                </div>
+                <div id="not_approved_id" style="display: none;">
+                  <div class="d-flex justify-content-center mt-2">
+                    <div class="w-25 d-flex justify-content-center alert alert-danger">
+                        <strong>Not Approved!</strong>
+                    </div>
+                  </div>
+              </div>
                   <%if(colorOfSpan){%>
                   <span id="loginCheckId" style="color:red ;"><%=loginCheckDet%></span>
                   <%}else{%>
@@ -66,6 +87,47 @@
 <!-- Page specific script -->
 <script>
 $(function () {
+    $.validator.setDefaults({
+          submitHandler: function (form) {
+            let formData = $("#quickForm").serializeArray();
+            $.ajax({
+              url: "/checklogin", 
+              type: "POST",
+              contentType: "application/json",             
+              data: JSON.stringify(formData),
+              cache: false,             
+              processData: false,      
+              success: function(data) {
+                if(data==="emailNotFound"){
+                  $("#email_exist_id").fadeTo(2000, 500).slideUp(500, function(){
+                          $("#email_exist_id").slideUp(500);
+                      });
+                }
+                else if(data==="incorrectPassword"){
+                  $("#incorrect_password_id").fadeTo(2000, 500).slideUp(500, function(){
+                          $("#incorrect_password_id").slideUp(500);
+                      });
+                }
+                else if(data==="notApproved"){
+                  $("#not_approved_id").fadeTo(2000, 500).slideUp(500, function(){
+                          $("#not_approved_id").slideUp(500);
+                      });
+                }
+                else{
+                  $("#email_exist_id").hide();
+                  $("#incorrect_password_id").hide();
+                  $("#not_approved_id_id").hide();
+                  console.log("i am executing")
+                  form.submit();
+                  
+                }
+              }
+          });
+          //return false;
+    
+          }
+      });
+    
   $('#quickForm').validate({
     rules: {
       login_email: {
