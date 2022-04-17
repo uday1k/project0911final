@@ -15,13 +15,29 @@
                     <!-- jquery validation -->
                     <div class="card card-primary">
                         <div class="card-header">
-                            <h3 class="card-title">Quick Example <small>jQuery Validation</small></h3>
+                            <h3 class="card-title">Registration Form Company</h3>
                         </div>
                         <!-- /.card-header -->
                         <!-- form start -->
                         <form id="quickForm" action="/company/register" method="post">
                             <div class="card-body">
                                 <span id="check_company_details_failedId" style="color:red ;"><%=checkFails%></span>
+
+                                <div id="email_exist_id" style="display: none;">
+                                    <div class="d-flex justify-content-center mt-2">
+                                      <div class="w-25 d-flex justify-content-center alert alert-danger">
+                                          <strong>Email Already Exist!</strong>
+                                      </div>
+                                    </div>
+                                </div>
+                                <div id="company_exist_id" style="display: none;">
+                                    <div class="d-flex justify-content-center mt-2">
+                                      <div class="w-25 d-flex justify-content-center alert alert-danger">
+                                          <strong>Company Name  Already Exist!</strong>
+                                      </div>
+                                    </div>
+                                </div>
+
                                 <div class="form-group">
                                     <label for="id_company_name">Company Name</label>
                                     <input type="text" name="comp_company_name" class="form-control" id="id_company_name" placeholder="Enter Company Name">
@@ -75,6 +91,43 @@
 
 
             $(function () {
+
+
+                $.validator.setDefaults({
+                            submitHandler: function (form) {
+                            let formData = $("#quickForm").serializeArray();
+                            $.ajax({
+                            url: "/company/checkcompanydetails", 
+                            type: "POST",
+                            contentType: "application/json",             
+                            data: JSON.stringify(formData),
+                            cache: false,             
+                            processData: false,      
+                            success: function(data) {
+                                if(data==="emailFound"){
+                                $("#email_exist_id").fadeTo(2000, 500).slideUp(500, function(){
+                                    $("#email_exist_id").slideUp(500);
+                                });
+                                }
+                                else if(data==="companyFound"){
+                                $("#company_exist_id").fadeTo(2000, 500).slideUp(500, function(){
+                                    $("#company_exist_id").slideUp(500);
+                                });
+                                }
+                                else{
+                                    $("#email_exist_id").hide();
+                                    $("#company_exist_id").hide();
+                                    form.submit();
+                                }
+                            }
+                            });
+         
+    
+                    }   
+                });
+
+
+
                 $('#quickForm').validate({
                     rules: {
                         comp_company_name:{

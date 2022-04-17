@@ -82,4 +82,45 @@ router.post('/register/:id?', function (req, res) {
 
 })
 
+
+router.post('/checkuserdetails', function (req, res) {
+  
+  
+  const register_email_value=req.body[1].value;
+  console.log(register_email_value)
+    const userData = new Promise(function (resolve, reject) {
+      dbo.collection("Users").findOne({ userEmail: register_email_value }, function (err, result) {
+        if (err) {
+          reject(err);
+        }
+        else {
+          resolve(result);
+        }
+      });
+
+    })
+
+    const companyData=new Promise(function(resolve,reject){
+      dbo.collection("Companies").findOne({ companyEmail: register_email_value }, function (err, result) {
+        if (err) {
+          reject(err);
+        }
+        else {
+          resolve(result);
+        }
+      });
+    })
+    async function asRegisterUserDetails() {
+      let result = await Promise.all([userData,companyData])
+      if(result[0]===null && result[1]===null)
+      {
+        res.send("noUserFound");
+      }
+      else{
+        res.send("emailFound");
+      }
+    }
+    asRegisterUserDetails();
+})
+
 module.exports = router;

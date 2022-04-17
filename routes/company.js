@@ -127,6 +127,66 @@ router.post('/register/:type?/:id?', function (req, res) {
 })
 
 
+
+
+router.post('/checkcompanydetails', function (req, res) {
+  
+  const register_company_name_value=req.body[0].value;
+  const register_email_value=req.body[1].value;  
+  const userData = new Promise(function (resolve, reject) {
+      dbo.collection("Users").findOne({ userEmail: register_email_value }, function (err, result) {
+        if (err) {
+          reject(err);
+        }
+        else {
+          resolve(result);
+        }
+      });
+
+    })
+
+    const companyData = new Promise(function (resolve, reject) {
+      dbo.collection("Companies").findOne({ companyEmail: register_email_value }, function (err, result) {
+        if (err) {
+          reject(err);
+        }
+        else {
+          resolve(result);
+        }
+      });
+    })
+    const companyDataNameCheck = new Promise(function (resolve, reject) {
+      dbo.collection("Companies").findOne({ companyName: register_company_name_value }, function (err, result) {
+        if (err) {
+          reject(err);
+        }
+        else {
+          resolve(result);
+        }
+      });
+    })
+
+
+    async function asRegisterCompanyDetails() {
+      let result = await Promise.all([userData, companyData]);
+      let companyDataNameCheckResult = await companyDataNameCheck;
+      if (companyDataNameCheckResult!=null) {
+        res.send("companyFound");
+      }
+      else if (result[0] === null && result[1] === null) {
+        res.send("noCompanyFound"); 
+      }
+      else {
+        res.send("emailFound");
+      }
+    }
+    asRegisterCompanyDetails();
+  
+
+})
+
+
+
 router.get('/insertjob',checkCompanyAuth, function (req, res) {
 
   let jobDetails = {};
