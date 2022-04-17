@@ -23,7 +23,7 @@
           <!-- jquery validation -->
           <div class="card card-primary">
             <div class="card-header">
-              <h3 class="card-title">Quick Example <small>jQuery Validation</small></h3>
+              <h3 class="card-title">Job Details Form</h3>
             </div>
             <!-- /.card-header -->
             <!-- form start -->
@@ -34,7 +34,11 @@
                   <select name="jobdept" class="form-control custom-select custom-select-md" id="iddept">
                     <option value="not selected">Click to select from Dropdown</option>
                     <% for(var i=0;i<typesOfDepts.length;i++){%>
-                      <option value="<%=typesOfDepts[i].departmentName%>"><%=typesOfDepts[i].departmentName%></option>
+                      <%if(typesOfDepts[i].departmentName===departmetSelected){%>
+                        <option value="<%=typesOfDepts[i].departmentName%>" selected><%=typesOfDepts[i].departmentName%></option>
+                        <%}else{%>
+                          <option value="<%=typesOfDepts[i].departmentName%>"><%=typesOfDepts[i].departmentName%></option>
+                          <%}%>
                       <%}%>
                   </select>
                 </div>
@@ -43,7 +47,11 @@
                   <select name="jobrole" class="form-control custom-select custom-select-md" id="idrole">
                     <option value="not selected">Click to select from Dropdown</option>
                     <% for(var i=0;i<typesOfRoles.length;i++){%>
-                      <option value="<%=typesOfRoles[i].roleName%>"><%=typesOfRoles[i].roleName%></option>
+                      <%if(typesOfRoles[i].roleName===roleSelected){%>
+                        <option value="<%=typesOfRoles[i].roleName%>" selected><%=typesOfRoles[i].roleName%></option>
+                        <%}else{%>
+                          <option value="<%=typesOfRoles[i].roleName%>"><%=typesOfRoles[i].roleName%></option>
+                          <%}%>
                       <%}%>
                   </select>
                 </div>
@@ -52,7 +60,11 @@
                   <select name="jobqual" class="form-control custom-select custom-select-md" id="idqual">
                     <option value="not selected">Click to select from Dropdown</option>
                     <% for(var i=0;i<quals.length;i++){%>
-                      <option value="<%=quals[i].qualificationName%>"><%=quals[i].qualificationName%></option>
+                      <%if(quals[i].qualificationName===qualificationSelected){%>
+                        <option value="<%=quals[i].qualificationName%>" selected><%=quals[i].qualificationName%></option>
+                        <%}else{%>
+                          <option value="<%=quals[i].qualificationName%>"><%=quals[i].qualificationName%></option>
+                          <%}%>
                       <%}%>
                   </select>
                 </div>
@@ -61,29 +73,52 @@
 
                 <div class="form-group">
                   <label for="iddes">Description</label>
-                  <textarea  name="jobdes" class="form-control" id="iddes" placeholder="Enter Description about the job"></textarea>
+                  <textarea  name="jobdes" class="form-control" id="iddes"  placeholder="Enter Description about the job"><%=jobDescriptionGiven%></textarea>
                 </div>
 
                 <div class="form-group">
                   <label for="idskillsrequied">Skills Required</label>
                   <select  name="jobskillsrequired" class="form-control custom-select"   id="idskillsrequired" multiple>
                     <% for(var i=0;i<typesOfSkills.length;i++){%>
-                      <option value="<%=typesOfSkills[i].skillName%>"><%=typesOfSkills[i].skillName%></option>
-                      <%}%>
+                              <%if(skillsSelected===null){%>
+                                      <option value="<%=typesOfSkills[i].skillName%>"><%=typesOfSkills[i].skillName%></option>
+                              <%}else if(Array.isArray(skillsSelected)){ let check=true%>
+
+                                  <%for(let j=0;j<skillsSelected.length;j++){ %>
+                                          <%if(skillsSelected[j]===typesOfSkills[i].skillName){check=false%>
+                                            <option value="<%=typesOfSkills[i].skillName%>" selected><%=typesOfSkills[i].skillName%></option>
+                                          <%}%>
+                                    <%}%>
+                                    <%if(check){%>
+                                      <option value="<%=typesOfSkills[i].skillName%>"><%=typesOfSkills[i].skillName%></option>
+                                      <%}%>
+                              <%}else{%>
+                                    <%if(skillsSelected===typesOfSkills[i].skillName){%>
+                                          <option value="<%=typesOfSkills[i].skillName%>" selected><%=typesOfSkills[i].skillName%></option>
+                                    <%}else{%>
+                                          <option value="<%=typesOfSkills[i].skillName%>"><%=typesOfSkills[i].skillName%></option>
+                                    <%}%>
+
+                              <%}%>
+                      
+                    <%}%>
                   </select>
                 </div>
                 
                 <div class="form-group">
                   <label for="idexp">Experience required</label>
-                  <input type="text" name="jobexp" class="form-control" id="idexp" placeholder="Enter in Years">
+                  <input type="text" name="jobexp" class="form-control" id="idexp" value="<%=experienceGiven%>" placeholder="Enter in Years">
                 </div>
                 <div class="form-group">
                   <label for="iddatetime">Last Date and time to apply</label>
-                  <input type="datetime-local" name="jobdatetime" class="form-control" id="iddatetime" placeholder="pick datetime in local">
+                  <input type="datetime-local" name="jobdatetime" class="form-control" id="iddatetime" value="<%=lastDateTimeToApplyGiven%>" placeholder="pick datetime in local">
                 </div>
                 <div class="form-group">
                   <label for="idctc">CTC offered</label>
-                  <input type="text" name="jobctc" class="form-control" id="idctc" placeholder="Enter in Lakhs">
+                  <input type="text" name="jobctc" class="form-control" id="idctc" value="<%=ctcMentioned%>" placeholder="Enter in Lakhs">
+                </div>
+                <div class="form-group">
+                  <input type="hidden" name="jobmongoid" class="form-control" value="<%=_id%>" id="idjobmongoid">
                 </div>
                 <div class="form-group mb-0">
                   <div class="custom-control custom-checkbox">

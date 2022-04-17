@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <%- include('partials/head.ejs', {title:"My Jobs"}) %>
+</head>
+<body>
+
+
+    
+    <%- include('partials/navbar.ejs',{pageName:"company"}) %>
+    
+    <div class="container p-3 my-3 border">
+        <% for(let i=0;i<rorj.length;i++){%>
+        <div class="card text-center">
+            <div class="card-header font-weight-bold">
+                <%=rorj[i].deptType%>-<%=rorj[i].roleType%>
+            </div>
+            <div class="card-body">
+                <h3 class="card-title"><a href="/company/insertjob/<%=rorj[i]._id%>" class="btn btn-outline-primary">Edit Job</a></h3>
+                <p class="card-text">
+                    qualification required:<b><%=rorj[i].qualificationRequired%></b><br>
+                    <%if(!(rorj[i].skillsRequired)){%>
+                        <b>No Skills required</b><br>
+                            <%} else if(!(Array.isArray(rorj[i].skillsRequired))){%>
+                                <b><%=rorj[i].skillsRequired %></b> is the only skill required.<br>
+                                <%}else{
+                                    for(let j=0;j<rorj[i].skillsRequired.length;j++){%>
+                                            <b><%=rorj[i].skillsRequired[j]%></b>,
+                                        <%}%>
+                                        and the like are  skills required.<br>        
+                                    <%}%>
+                    <%=rorj[i].jobDescription%>
+                </p>
+                <a href="#" class="btn btn-primary">Apply</a>
+            </div>
+            <div class="card-footer text-muted font-weight-normal">
+               Last Date and Time to Apply: <%=rorj[i].lastDateTimeToApply%>(IST)
+            </div>
+        </div>
+        <%}%>
+    </div>
+
+    
+    <%- include('partials/footscript.ejs') %>
+</body>
+</html>

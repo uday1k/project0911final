@@ -1,5 +1,5 @@
 <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
-  <a class="navbar-brand" href="/"> <img class="bg-light"src="dist/img/logojob.png" width="30" height="30"
+  <a class="navbar-brand" href="/"> <img class="bg-light"src="/dist/img/logojob.png" width="30" height="30"
           class="d-inline-block align-top" alt="">
        Jobs Posting Portal</a>
   <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
@@ -60,6 +60,9 @@
                             <%}%>
 
           <%} else if(locals.role==="company"){%>
+            <li class="nav-item mr-2">
+              <a href="/company/myjobs" role="button" class="btn btn-light">My Jobs</a>
+          </li>
             <li class="nav-item mr-2">
               <a href="/company/insertjob" role="button" class="btn btn-light">Post Job</a>
           </li>
