@@ -2,13 +2,40 @@
 <html lang="en">
 <head>
   <%- include('partials/head.ejs', {title:"Admin"}) %>
+  
 </head>
 <body>
   <%- include('partials/adminNavbar.ejs',{pageName:"home"}) %>
-
   <%- include('partials/dataAlerts.ejs') %>
-
-
+  <div class="d-flex justify-content-center">
+    <div id='myDiv1'><!-- Plotly chart will be drawn inside this DIV --></div>
+  </div>
   <%- include('partials/footscript.ejs') %>
-</body>
+
+<script>
+  
+  const myArrayValues = "<%=skillValues%>".split(",");
+  let dataValues=myArrayValues.map(function(value){
+    return parseInt(value);
+  })
+  
+  const myArrayNames = "<%=skillNames%>".split(",");
+  
+  
+  var data = [{
+  values: dataValues,
+  labels: myArrayNames,
+  type: 'pie'
+}];
+
+var layout = {
+  title: 'Skills In Demand',
+  height: 400,
+  width: 500
+};
+
+Plotly.newPlot('myDiv1', data, layout);
+</script>
+
+</body>d-flex justify-content-center
 </html>

@@ -260,13 +260,7 @@ asCredValidateFunc();
 
 
 
-router.post('/checkemail', function (req, res) {
-  req.flash("checkFlash","succesfully loggedIn")
-  if(body[0].value==="u@gmail.com")
-  res.send(true)
-  else
-  res.send(false)
-})
+
 router.get('/logout', function (req, res) {
   req.session.destroy();
   res.redirect("/");

@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 var test = require('../app');
 var createError=require('http-errors');
+const  Chart  = require('chart.js');
 
 var dbo;
 const MongoClient = require('mongodb').MongoClient;
@@ -24,12 +25,40 @@ router.use((req, res, next) => {
 })
 
 router.get('/',function(req,res){
-  
+    
     res.locals.auth=req.session.auth;
     res.locals.role=req.session.role;
-    res.locals.sucessfullyRegisteredCheck=req.flash('checkFlash');
+    res.locals.flashesValues=req.flash('checkFlash');
+    async function funcSkillAggr(){
 
-    res.render('admin');
+        let skillAggregate=await dbo.collection("jobsDetails").aggregate([
+          {
+            '$unwind': {
+              'path': '$skillsRequired'
+            }
+          }, {
+            '$group': {
+              '_id': '$skillsRequired', 
+              'count': {
+                '$sum': 1
+              }
+            }
+          }
+        ])
+        dataCountBySkillName=[]
+        dataCountBySkillValue=[]
+        for await (const doc of skillAggregate) { 
+          dataCountBySkillName.push(doc._id);
+          dataCountBySkillValue.push(doc.count);
+        }
+    res.render('admin',{"skillNames":dataCountBySkillName,"skillValues":dataCountBySkillValue});
+      
+      
+
+    }
+    
+    funcSkillAggr();
+    
 })
 
 router.get('/companylist', function (req, res) {

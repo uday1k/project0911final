@@ -28,7 +28,7 @@ const checkCompanyAuth=(req, res, next) => {
 }
 
 
-router.get('/myjobs', function (req, res) {
+router.get('/myjobs', checkCompanyAuth,function (req, res) {
   res.locals.auth=req.session.auth;
   res.locals.role=req.session.role;
   async function asRetriveMyJobs(){
@@ -197,7 +197,7 @@ router.post('/checkcompanydetails', function (req, res) {
 
 
 
-router.get('/insertjob/:idofjob?', function (req, res) {
+router.get('/insertjob/:idofjob?',checkCompanyAuth, function (req, res) {
     let idofjob=req.params.idofjob;
 
     const skillsTypes = new Promise(function (resolve, reject) {
@@ -289,7 +289,7 @@ router.get('/insertjob/:idofjob?', function (req, res) {
 
 
 
-router.post('/savejob', function (req, res) {
+router.post('/savejob', checkCompanyAuth,function (req, res) {
   if(!(req.body.jobmongoid)){
     let insertJobDetails = {};
     insertJobDetails.deptType = req.body.jobdept;
