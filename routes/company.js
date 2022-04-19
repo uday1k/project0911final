@@ -139,7 +139,7 @@ router.post('/register/:type?/:id?', function (req, res) {
 
 
 
-router.post('/checkcompanydetails',checkCompanyAuth, function (req, res) {
+router.post('/checkcompanydetails', function (req, res) {
   
   const register_company_name_value=req.body[0].value;
   const register_email_value=req.body[1].value;  
