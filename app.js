@@ -92,17 +92,6 @@ app.use('/user',userRoutes);
 
 
 
-const checkAuth = function (req, res, next) {
-  if (req.session.auth) {
-    next();
-  }
-  else {
-    res.render("loginpag", { "loginCheckDet": "Session Expired! Login Again", "colorOfSpan": true });
-  }
-}
-
-
-
 
 
 app.post('/emailvalid', function (req, res) {

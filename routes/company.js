@@ -139,7 +139,7 @@ router.post('/register/:type?/:id?', function (req, res) {
 
 
 
-router.post('/checkcompanydetails', function (req, res) {
+router.post('/checkcompanydetails',checkCompanyAuth, function (req, res) {
   
   const register_company_name_value=req.body[0].value;
   const register_email_value=req.body[1].value;  
@@ -326,7 +326,7 @@ router.post('/savejob', checkCompanyAuth,function (req, res) {
                   async function asFuncUpdateJobDetails() {
                     await  dbo.collection("jobsDetails").updateOne(ObjectContainingIDtobeEffected,newvalues,function (err, resultToCheckDetailsInserted) {
                       if (err) throw err;
-                      req.flash('checkFlash','Job Successfully Published');
+                      req.flash('checkFlash','Job Successfully Updated');
                       res.redirect("/");
                     })
                   }

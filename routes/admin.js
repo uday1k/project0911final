@@ -1,8 +1,8 @@
 const express = require('express');
 const router = express.Router();
-var test = require('../app');
+var app = require('../app');
 var createError=require('http-errors');
-const  Chart  = require('chart.js');
+
 
 var dbo;
 const MongoClient = require('mongodb').MongoClient;
