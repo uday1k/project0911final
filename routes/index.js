@@ -23,8 +23,7 @@ function paginatedResults() {
 
             await dbo.collection("jobsDetails").find({}).toArray(function(err,model){
     
-                  //const page = parseInt(req.query.page);
-                  //const limit = parseInt(req.query.limit);
+                 
                   const limit=3;
                   let page;
                   if(req.query.page){
@@ -66,14 +65,6 @@ function paginatedResults() {
   }
 }
 
-
-
-
-
-
-router.get("/paginate", paginatedResults(), (req, res) => {
-  res.json(res.paginatedResults);
-});
 
 
 
