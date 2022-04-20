@@ -55,6 +55,8 @@
                       <%}%>
                   </select>
                 </div>
+
+
                 <div class="form-group">
                   <label for="idqual">Job Qualification Required</label>
                   <select name="jobqual" class="form-control custom-select custom-select-md" id="idqual">
@@ -176,6 +178,9 @@
         jobrole: {
           notselectedoption: true,
         },
+        jobqual: {
+          notselectedoption: true,
+        },
         jobdes: {
           required: true,
         },
@@ -201,6 +206,9 @@
         },
         jobrole: {
           notselectedoption: "please select job role from dropdown",
+        },
+        jobqual: {
+          notselectedoption: "Please Select Job Qualification",
         },
         jobdes: {
           required: "Please Enter Description about Job"
