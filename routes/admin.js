@@ -3,14 +3,8 @@ const router = express.Router();
 var app = require('../app');
 var createError=require('http-errors');
 
-
-var dbo;
-const MongoClient = require('mongodb').MongoClient;
-const url = "mongodb://localhost:27017/";
-MongoClient.connect(url, function (err, db) {
-  if (err) throw err;
-  dbo = db.db("onlinejob");
-});
+var mongoUtil = require( './mongoDB' );
+var dbo = mongoUtil.getDb();
 
 router.use((req, res, next) => {
   if (!(req.session.auth)) {
