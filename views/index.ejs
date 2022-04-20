@@ -43,7 +43,39 @@
         <%}%>
     </div>
 
-    
+    <div class="d-flex justify-content-center">
+        <nav>
+            <ul class="pagination">
+                <%if(previous){%>
+                    <li class="page-item">
+                        <a class="page-link" href="/?page=<%=previous.page%>">Previous</a>
+                      </li>
+                    <%}else{%>
+                        <li class="page-item disabled">
+                            <span class="page-link">Previous</span>
+                          </li>
+                        <%}%>
+              
+              
+              <li class="page-item active">
+                <span class="page-link">
+                  <%=pageNo%>
+                </span>
+              </li>
+
+              <%if(next){%>
+                <li class="page-item">
+                    <a class="page-link" href="/?page=<%=next.page%>">Next</a>
+                  </li>
+                <%}else{%>
+                    <li class="page-item disabled">
+                        <span class="page-link">Next</span>
+                      </li>
+                    <%}%>
+              
+            </ul>
+          </nav>
+    </div>
     <%- include('partials/footscript.ejs') %>
 </body>
 </html>

@@ -1,27 +1,96 @@
 const express = require('express');
 const router = express.Router();
 const bcrypt = require('bcrypt');
+//var paginatedResults=require("../app").paginatedResults
+
 
 var mongoUtil = require( './mongoDB' );
 var dbo = mongoUtil.getDb();
-
-
-
 router.use(express.json());
 router.use(express.urlencoded({ extended: false }));
-router.get('/', function (req, res) {
+
+
+
+
+
+
+
+function paginatedResults() {
+
+  return (req, res, next) => {
+      
+          async function retrivePageSpecificDataFunc(){
+
+            await dbo.collection("jobsDetails").find({}).toArray(function(err,model){
+    
+                  //const page = parseInt(req.query.page);
+                  //const limit = parseInt(req.query.limit);
+                  const limit=3;
+                  let page;
+                  if(req.query.page){
+                    page = parseInt(req.query.page);
+                  }
+                  else{
+                    page=1;
+                  }
+                  
+                  const startIndex = (page - 1) * limit;
+                  const endIndex = page * limit;
+              
+                  const results = {};
+                  if (endIndex < model.length) {
+                    results.next = {
+                      page: page + 1,
+                      limit: limit
+                    };
+                  }
+              
+                  if (startIndex > 0) {
+                    results.previous = {
+                      page: page - 1,
+                      limit: limit
+                    };
+                  }
+                  results.pageNo=page;
+                  results.results = model.slice(startIndex, endIndex);
+              
+                  res.paginatedResults = results;
+                  next();
+            });
+
+                
+
+    }
+  
+    retrivePageSpecificDataFunc();
+  }
+}
+
+
+
+
+
+
+router.get("/paginate", paginatedResults(), (req, res) => {
+  res.json(res.paginatedResults);
+});
+
+
+
+
+router.get('/', paginatedResults(),function (req, res) {
   res.locals.auth=req.session.auth;
   res.locals.role=req.session.role;
   res.locals.flashesValues=req.flash('checkFlash');
-  async function asRetriveJobs(){
-    await dbo.collection("jobsDetails").find({}).toArray(function(err,retrivedValues){
-      if(err) throw err;
+  
       let indexValues={}
-      indexValues.rorj=retrivedValues;
+
+        indexValues.next=res.paginatedResults.next;
+        indexValues.previous=res.paginatedResults.previous;
+        indexValues.pageNo=res.paginatedResults.pageNo;
+        indexValues.rorj= res.paginatedResults.results;
       res.render("index",indexValues);
-    })
-  }
-  asRetriveJobs();
+   
 })
 
 router.get('/courses',function(req,res){
