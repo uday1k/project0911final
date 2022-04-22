@@ -1,13 +1,12 @@
 const express = require('express');
 const router = express.Router();
 const bcrypt = require('bcrypt');
-//var paginatedResults=require("../app").paginatedResults
+
 
 
 var mongoUtil = require( './mongoDB' );
 var dbo = mongoUtil.getDb();
-router.use(express.json());
-router.use(express.urlencoded({ extended: false }));
+
 
 
 
@@ -19,12 +18,12 @@ function paginatedResults() {
 
   return (req, res, next) => {
       
-          async function retrivePageSpecificDataFunc(){
+         
 
-            await dbo.collection("jobsDetails").find({}).toArray(function(err,model){
+             dbo.collection("jobsDetails").find({}).toArray(function(err,model){
     
                  
-                  const limit=3;
+                  const limit=2;
                   let page;
                   if(req.query.page){
                     page = parseInt(req.query.page);
@@ -57,11 +56,6 @@ function paginatedResults() {
                   next();
             });
 
-                
-
-    }
-  
-    retrivePageSpecificDataFunc();
   }
 }
 
