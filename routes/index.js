@@ -4,57 +4,49 @@ const bcrypt = require('bcrypt');
 
 
 
-var mongoUtil = require( './mongoDB' );
+var mongoUtil = require('./mongoDB');
 var dbo = mongoUtil.getDb();
-
-
-
-
-
 
 
 
 function paginatedResults() {
 
   return (req, res, next) => {
-      
-         
+    dbo.collection("jobsDetails").find({}).toArray(function (err, model) {
 
-             dbo.collection("jobsDetails").find({}).toArray(function(err,model){
-    
-                 
-                  const limit=2;
-                  let page;
-                  if(req.query.page){
-                    page = parseInt(req.query.page);
-                  }
-                  else{
-                    page=1;
-                  }
-                  
-                  const startIndex = (page - 1) * limit;
-                  const endIndex = page * limit;
-              
-                  const results = {};
-                  if (endIndex < model.length) {
-                    results.next = {
-                      page: page + 1,
-                      limit: limit
-                    };
-                  }
-              
-                  if (startIndex > 0) {
-                    results.previous = {
-                      page: page - 1,
-                      limit: limit
-                    };
-                  }
-                  results.pageNo=page;
-                  results.results = model.slice(startIndex, endIndex);
-              
-                  res.paginatedResults = results;
-                  next();
-            });
+
+      const limit = 2;
+      let page;
+      if (req.query.page) {
+        page = parseInt(req.query.page);
+      }
+      else {
+        page = 1;
+      }
+
+      const startIndex = (page - 1) * limit;
+      const endIndex = page * limit;
+
+      const results = {};
+      if (endIndex < model.length) {
+        results.next = {
+          page: page + 1,
+          limit: limit
+        };
+      }
+
+      if (startIndex > 0) {
+        results.previous = {
+          page: page - 1,
+          limit: limit
+        };
+      }
+      results.pageNo = page;
+      results.results = model.slice(startIndex, endIndex);
+
+      res.paginatedResults = results;
+      next();
+    });
 
   }
 }
@@ -63,24 +55,24 @@ function paginatedResults() {
 
 
 
-router.get('/', paginatedResults(),function (req, res) {
-  res.locals.auth=req.session.auth;
-  res.locals.role=req.session.role;
-  res.locals.flashesValues=req.flash('checkFlash');
-  
-      let indexValues={}
+router.get('/', paginatedResults(), function (req, res) {
+  res.locals.auth = req.session.auth;
+  res.locals.role = req.session.role;
+  res.locals.flashesValues = req.flash('checkFlash');
 
-        indexValues.next=res.paginatedResults.next;
-        indexValues.previous=res.paginatedResults.previous;
-        indexValues.pageNo=res.paginatedResults.pageNo;
-        indexValues.rorj= res.paginatedResults.results;
-      res.render("index",indexValues);
-   
+  let indexValues = {}
+
+  indexValues.next = res.paginatedResults.next;
+  indexValues.previous = res.paginatedResults.previous;
+  indexValues.pageNo = res.paginatedResults.pageNo;
+  indexValues.rorj = res.paginatedResults.results;
+  res.render("index", indexValues);
+
 })
 
-router.get('/courses',function(req,res){
-  res.locals.auth=req.session.auth;
-  res.locals.role=req.session.role;
+router.get('/courses', function (req, res) {
+  res.locals.auth = req.session.auth;
+  res.locals.role = req.session.role;
   res.render("courses");
 })
 
@@ -98,213 +90,148 @@ router.get('/login', function (req, res) {
 
 
 
-router.post('/checklogin', function (req, res) {
+router.post('/checklogin', async function (req, res) {
 
-  const login_email_value=req.body[0].value;
-  const login_password_value=req.body[1].value;
-  const userData = new Promise(function (resolve, reject) {
-    dbo.collection("Users").findOne({ userEmail: login_email_value }, function (err, result) {
-      if (err) {
-        reject(err);
-      }
-      else {
-        resolve(result);
-      }
-    });
+  const login_email_value = req.body[0].value;
+  const login_password_value = req.body[1].value;
 
-  })
-
-  const companyData=new Promise(function(resolve,reject){
-    dbo.collection("Companies").findOne({ companyEmail: login_email_value }, function (err, result) {
-      if (err) {
-        reject(err);
-      }
-      else {
-        resolve(result);
-      }
-    });
-  })
-
-  const adminData=new Promise(function(resolve,reject){
-    dbo.collection("Admins").findOne({ adminEmail: login_email_value }, function (err, result) {
-      if (err) {
-        reject(err);
-      }
-      else {
-        resolve(result);
-      }
-    });
-  })
-
-async function asCredValidateFunc() {
-  let result = await Promise.all([userData,companyData,adminData])
+  const userData = dbo.collection("Users").findOne({ userEmail: login_email_value })
+  const companyData = dbo.collection("Companies").findOne({ companyEmail: login_email_value })
+  const adminData = dbo.collection("Admins").findOne({ adminEmail: login_email_value });
 
 
-  if (result[0]===null && result[1]==null && result[2]==null) {
+  let result = await Promise.all([userData, companyData, adminData])
+
+
+  if (result[0] === null && result[1] == null && result[2] == null) {
     res.send("emailNotFound")
   }
-  else if(result[2]!=null){
+  else if (result[2] != null) {
     //bcrypt.compare(req.body.login_password, result[2].adminPassword).then(function(resultOfPasswordComparison) {
-      if(result[2].adminPassword===login_password_value){
-        res.locals.auth=req.session.auth=true;
-        res.locals.role=req.session.role="admin";
-        req.flash('checkFlash','succesfully loggedIn');
-        res.send("formSubmitted")
-      }
-      else{
-        res.send("incorrectPassword")
-      }
+    if (result[2].adminPassword === login_password_value) {
+      res.locals.auth = req.session.auth = true;
+      res.locals.role = req.session.role = "admin";
+      req.flash('checkFlash', 'succesfully loggedIn');
+      res.send("formSubmitted")
+    }
+    else {
+      res.send("incorrectPassword")
+    }
     //})
   }
-  else if(result[0]===null){
-        if(result[1].status!="accepted"){
-          res.send("notApproved")
+  else if (result[0] === null) {
+    if (result[1].status != "accepted") {
+      res.send("notApproved")
+    }
+    else {
+      bcrypt.compare(login_password_value, result[1].companyPassword).then(function (resultOfPasswordComparison) {
+        if (resultOfPasswordComparison) {
+          res.locals.auth = req.session.auth = true;
+          res.locals.role = req.session.role = "company";
+          res.locals.companyName = req.session.companyName = result[1].companyName;
+          req.flash('checkFlash', 'succesfully loggedIn');
+          res.send("formSubmitted")
         }
-        else{
-              bcrypt.compare(login_password_value, result[1].companyPassword).then(function(resultOfPasswordComparison) {
-                if(resultOfPasswordComparison){
-                  res.locals.auth=req.session.auth=true;
-                  res.locals.role=req.session.role="company";
-                  res.locals.companyName=req.session.companyName=result[1].companyName;
-                  req.flash('checkFlash','succesfully loggedIn');
-                  res.send("formSubmitted")
-                }
-                else{
-                  res.send("incorrectPassword")
-                }
-              })
-            }
+        else {
+          res.send("incorrectPassword")
+        }
+      })
+    }
   }
-  else if(result[1]===null){
-        
-    bcrypt.compare(login_password_value, result[0].userPassword).then(function(resultOfPasswordComparison) {
-      if(resultOfPasswordComparison){
-        res.locals.auth=req.session.auth=true;
-        res.locals.role=req.session.role="user";
-        req.flash('checkFlash','succesfully loggedIn');
+  else if (result[1] === null) {
+
+    bcrypt.compare(login_password_value, result[0].userPassword).then(function (resultOfPasswordComparison) {
+      if (resultOfPasswordComparison) {
+        res.locals.auth = req.session.auth = true;
+        res.locals.role = req.session.role = "user";
+        req.flash('checkFlash', 'succesfully loggedIn');
         res.send("formSubmitted")
       }
-      else{
+      else {
         res.send("incorrectPassword")
       }
 
     })
-          
+
 
   }
   else {
-    
+
   }
-}
 
 
-
-asCredValidateFunc();
 
 });
 
-router.post('/validatelogin', function (req, res) {
+router.post('/validatelogin', async function (req, res) {
+
+
+  const userData = dbo.collection("Users").findOne({ userEmail: req.body.login_email })
+  const companyData = dbo.collection("Companies").findOne({ companyEmail: req.body.login_email })
+  const adminData =dbo.collection("Admins").findOne({ adminEmail: req.body.login_email })
+  
 
   
-  const userData = new Promise(function (resolve, reject) {
-    dbo.collection("Users").findOne({ userEmail: req.body.login_email }, function (err, result) {
-      if (err) {
-        reject(err);
-      }
-      else {
-        resolve(result);
-      }
-    });
-
-  })
-
-  const companyData=new Promise(function(resolve,reject){
-    dbo.collection("Companies").findOne({ companyEmail: req.body.login_email }, function (err, result) {
-      if (err) {
-        reject(err);
-      }
-      else {
-        resolve(result);
-      }
-    });
-  })
-
-  const adminData=new Promise(function(resolve,reject){
-    dbo.collection("Admins").findOne({ adminEmail: req.body.login_email }, function (err, result) {
-      if (err) {
-        reject(err);
-      }
-      else {
-        resolve(result);
-      }
-    });
-  })
-
-async function asCredValidateFunc() {
-  let result = await Promise.all([userData,companyData,adminData])
+    let result = await Promise.all([userData, companyData, adminData])
 
 
-  if (result[0]===null && result[1]==null && result[2]==null) {
-    res.render("loginpag", { "loginCheckDet": "Email ID Not Found", "colorOfSpan": true });
-  }
-  else if(result[2]!=null){
-    //bcrypt.compare(req.body.login_password, result[2].adminPassword).then(function(resultOfPasswordComparison) {
-      if(result[2].adminPassword===req.body.login_password){
-        res.locals.auth=req.session.auth=true;
-        res.locals.role=req.session.role="admin";
-        req.flash('checkFlash','succesfully loggedIn');
+    if (result[0] === null && result[1] == null && result[2] == null) {
+      res.render("loginpag", { "loginCheckDet": "Email ID Not Found", "colorOfSpan": true });
+    }
+    else if (result[2] != null) {
+      //bcrypt.compare(req.body.login_password, result[2].adminPassword).then(function(resultOfPasswordComparison) {
+      if (result[2].adminPassword === req.body.login_password) {
+        res.locals.auth = req.session.auth = true;
+        res.locals.role = req.session.role = "admin";
+        req.flash('checkFlash', 'succesfully loggedIn');
         res.redirect('/admin');
       }
-      else{
+      else {
         res.render("loginpag", { "loginCheckDet": "Incorrect Password", "colorOfSpan": true });
       }
-    //})
-  }
-  else if(result[0]===null){
-        if(result[1].status!="accepted"){
-          res.render("loginpag", { "loginCheckDet": "You are not Approved!", "colorOfSpan": true });
+      //})
+    }
+    else if (result[0] === null) {
+      if (result[1].status != "accepted") {
+        res.render("loginpag", { "loginCheckDet": "You are not Approved!", "colorOfSpan": true });
+      }
+      else {
+        bcrypt.compare(req.body.login_password, result[1].companyPassword).then(function (resultOfPasswordComparison) {
+          if (resultOfPasswordComparison) {
+            res.locals.auth = req.session.auth = true;
+            res.locals.role = req.session.role = "company";
+            res.locals.companyName = req.session.companyName = result[1].companyName;
+            req.flash('checkFlash', 'succesfully loggedIn');
+            res.redirect('/');
+          }
+          else {
+            res.render("loginpag", { "loginCheckDet": "Incorrect Password", "colorOfSpan": true });
+          }
+        })
+      }
+    }
+    else if (result[1] === null) {
+
+      bcrypt.compare(req.body.login_password, result[0].userPassword).then(function (resultOfPasswordComparison) {
+        if (resultOfPasswordComparison) {
+          res.locals.auth = req.session.auth = true;
+          res.locals.role = req.session.role = "user";
+          req.flash('checkFlash', 'succesfully loggedIn');
+          res.redirect('/');
         }
-        else{
-              bcrypt.compare(req.body.login_password, result[1].companyPassword).then(function(resultOfPasswordComparison) {
-                if(resultOfPasswordComparison){
-                  res.locals.auth=req.session.auth=true;
-                  res.locals.role=req.session.role="company";
-                  res.locals.companyName=req.session.companyName=result[1].companyName;
-                  req.flash('checkFlash','succesfully loggedIn');
-                  res.redirect('/');
-                }
-                else{
-                  res.render("loginpag", { "loginCheckDet": "Incorrect Password", "colorOfSpan": true });
-                }
-              })
-            }
-  }
-  else if(result[1]===null){
-        
-    bcrypt.compare(req.body.login_password, result[0].userPassword).then(function(resultOfPasswordComparison) {
-      if(resultOfPasswordComparison){
-        res.locals.auth=req.session.auth=true;
-        res.locals.role=req.session.role="user";
-        req.flash('checkFlash','succesfully loggedIn');
-        res.redirect('/');
-      }
-      else{
-        res.render("loginpag", { "loginCheckDet": "Incorrect Password", "colorOfSpan": true });
+        else {
+          res.render("loginpag", { "loginCheckDet": "Incorrect Password", "colorOfSpan": true });
 
-      }
+        }
 
-    })
-          
-
-  }
-  else {
-    
-  }
-}
+      })
 
 
+    }
+    else {
 
-asCredValidateFunc();
+    }
+  
 
 });
 

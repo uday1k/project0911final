@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
-var app = require('../app')
 var createError=require('http-errors');
+
 var mongoUtil = require( './mongoDB' );
 var dbo = mongoUtil.getDb();
 
@@ -18,43 +18,37 @@ router.use((req, res, next) => {
     }
 })
 
-router.post('/skill', function (req, res) {
-    async function asAddSkillFunc() {
-        await dbo.collection("skillsTypes").insertOne({ "skillName": req.body.skillname }, function (err, resultOfInsrt) {
+router.post('/skill',async function (req, res) {
+    
+       await  dbo.collection("skillsTypes").insertOne({ "skillName": req.body.skillname }, function (err, resultOfInsrt) {
             res.redirect("/admin/addoptions");
         })
-    }
-    asAddSkillFunc();
 })
 
-router.post('/role', function (req, res) {
-    async function asAddRoleFunc() {
+router.post('/role', async function (req, res) {
+    
         await dbo.collection("roleTypes").insertOne({ "roleName": req.body.rolename }, function (err, resultOfInsrt) {
             res.redirect("/admin/addoptions");
         })
-    }
-    asAddRoleFunc();
+   
 
 })
 
-router.post('/department', function (req, res) {
-    async function asAddDeptFunc() {
+router.post('/department',async function (req, res) {
+    
         await dbo.collection("departmentTypes").insertOne({ "departmentName": req.body.departmentname }, function (err, resultOfInsrt) {
             res.redirect("/admin/addoptions");
         })
-    }
-    asAddDeptFunc();
+    
 
 })
 
 
-router.post('/qualification', function (req, res) {
-    async function asAddQualFunc() {
+router.post('/qualification',async function (req, res) {
+    
         await dbo.collection("Qualifications").insertOne({ "qualificationName": req.body.qualificationname }, function (err, resultOfInsrt) {
             res.redirect("/admin/addoptions");
         })
-    }
-    asAddQualFunc();
 
 })
 
