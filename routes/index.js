@@ -144,11 +144,18 @@ router.get('/getsearch', paginatedMacthedResults(),async function (req, res) {
 
 
 router.post('/gethints',async function (req, res) {
+  let hintValues=[]
+  let skills= dbo.collection("skillsTypes").find({ skillName: { $regex: req.body[0], $options: "i" } }).toArray();
+  let  companies=dbo.collection("Companies").find({ companyName: { $regex: req.body[0], $options: "i" } }).toArray();
+
+  let hints=await Promise.all([skills,companies])
+
+  await Promise.all([
+  hints[0].forEach(o => {hintValues.push(o.skillName);}),
+  hints[1].forEach(o => {hintValues.push(o.companyName);})
+  ])
+   res.send(hintValues);
   
-  dbo.collection("skillsTypes").find({ skillName: { $regex: req.body[0], $options: "i" } }).toArray(function (err, hintValues) {
-    
-    res.send(hintValues);
-  })  
 })
 
 

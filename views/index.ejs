@@ -142,7 +142,7 @@ function addtosearchfun(val){
                             
                                 var availableSkills=""
                                 for(let i=0;i<msg.length;i++){
-                                    availableSkills+=`<li><input class="sm-2" value=${msg[i].skillName} onclick=addtosearchfun(this.value) readonly></li>`
+                                    availableSkills+=`<li><input class="sm-2" value=${msg[i]} onclick=addtosearchfun(this.value) readonly></li>`
                                 }
                                 $("#options_id").html(availableSkills);
                             
