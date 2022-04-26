@@ -18,15 +18,13 @@
             <div class="row">
                 <div class="col-2">
                     <input class="form-control mr-sm-2" name="search_value" id="search_id" type="search" placeholder="Search" value="<%=search_id_value%>"onkeyup="showHint(this.value)">    
+                    <ul class="list-unstyled" id="options_id">
+        
+                    </ul>
                 </div>
                 <div class="col-2">
                     <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
                 </div>
-            </div>
-            <div class="row">
-                <ul style="list-style-type:none;" id="options_id">
-           
-                </ul>
             </div>
           </form>
     </div>
@@ -142,7 +140,7 @@ function addtosearchfun(val){
                             
                                 var availableSkills=""
                                 for(let i=0;i<msg.length;i++){
-                                    availableSkills+=`<li><input class="sm-2" value=${msg[i]} onclick=addtosearchfun(this.value) readonly></li>`
+                                    availableSkills+=`<li><input class="form-control mr-sm-2" value=${msg[i]} onclick=addtosearchfun(this.value) readonly></li>`
                                 }
                                 $("#options_id").html(availableSkills);
                             
