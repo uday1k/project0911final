@@ -12,6 +12,27 @@
     
     <%- include('partials/dataAlerts.ejs') %>
 
+
+    <div class="m-3">
+        <form  action="/" method="get">
+            <div class="row">
+                <div class="col-2">
+                    <input class="form-control mr-sm-2" name="search_value" id="search_id" type="search" placeholder="Search" onkeyup="showHint(this.value)">    
+                </div>
+                <div class="col-2">
+                    <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+                </div>
+            </div>
+            <div class="row">
+                <ul style="list-style-type:none;" id="options_id">
+           
+                </ul>
+            </div>
+          </form>
+    </div>
+    
+        
+
     <div class="container p-3 my-3 border">
         <% for(let i=0;i<rorj.length;i++){%>
         <div class="card text-center">
@@ -48,7 +69,7 @@
             <ul class="pagination">
                 <%if(previous){%>
                     <li class="page-item">
-                        <a class="page-link" href="/?page=<%=previous.page%>">Previous</a>
+                        <a class="page-link" href="<%=prevURL%>">Previous</a>
                       </li>
                     <%}else{%>
                         <li class="page-item disabled">
@@ -65,7 +86,8 @@
 
               <%if(next){%>
                 <li class="page-item">
-                    <a class="page-link" href="/?page=<%=next.page%>">Next</a>
+                    <a class="page-link" href="<%=nextURL%>">Next</a>
+                    
                   </li>
                 <%}else{%>
                     <li class="page-item disabled">
@@ -77,5 +99,60 @@
           </nav>
     </div>
     <%- include('partials/footscript.ejs') %>
+
+
+
+    <script>
+
+function addtosearchfun(val){
+            let currentValue=$("#search_id").val()
+            let lastIndex=currentValue.lastIndexOf(",")
+            if(lastIndex===-1){
+                $("#search_id").val(val+",");
+            }
+            else{
+                let chVal=currentValue.slice(0,lastIndex+1)
+                $("#search_id").val(chVal+val+",");
+            }
+            showHint("");
+    
+    }
+
+        function showHint(str) {
+            let lastIndexofStr=str.lastIndexOf(",")
+                    let searchVal=str.slice(lastIndexofStr+1,)
+
+            if (str.length == 0 || searchVal.length==0) {
+                $("#options_id").html("");
+                return;
+            } 
+            else if(str[-1]==','){
+                $("#options_id").html("");
+                return;
+            }
+            else {
+                $.ajax({
+                        url: "/gethints", 
+                        type: "POST",
+                        contentType: "application/json",             
+                        data: JSON.stringify([searchVal]),
+                        cache: false,             
+                        processData: false,      
+                        success: function(msg) {
+                            
+                                var availableSkills=""
+                                for(let i=0;i<msg.length;i++){
+                                    availableSkills+=`<li><input class="sm-2" value=${msg[i].skillName} onclick=addtosearchfun(this.value) readonly></li>`
+                                }
+                                $("#options_id").html(availableSkills);
+                            
+                            }
+                    });
+            }
+        }
+        </script>
+
+
+
 </body>
 </html>

@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const bcrypt = require('bcrypt');
-
+var qs = require('querystring');
 
 
 var mongoUtil = require('./mongoDB');
@@ -9,53 +9,9 @@ var dbo = mongoUtil.getDb();
 
 
 
-function paginatedResults() {
-
-  return (req, res, next) => {
-    dbo.collection("jobsDetails").find({}).toArray(function (err, model) {
 
 
-      const limit = 2;
-      let page;
-      if (req.query.page) {
-        page = parseInt(req.query.page);
-      }
-      else {
-        page = 1;
-      }
-
-      const startIndex = (page - 1) * limit;
-      const endIndex = page * limit;
-
-      const results = {};
-      if (endIndex < model.length) {
-        results.next = {
-          page: page + 1,
-          limit: limit
-        };
-      }
-
-      if (startIndex > 0) {
-        results.previous = {
-          page: page - 1,
-          limit: limit
-        };
-      }
-      results.pageNo = page;
-      results.results = model.slice(startIndex, endIndex);
-
-      res.paginatedResults = results;
-      next();
-    });
-
-  }
-}
-
-
-
-
-
-router.get('/', paginatedResults(), function (req, res) {
+router.get('/', paginatedMacthedResults(), function (req, res) {
   res.locals.auth = req.session.auth;
   res.locals.role = req.session.role;
   res.locals.flashesValues = req.flash('checkFlash');
@@ -65,6 +21,14 @@ router.get('/', paginatedResults(), function (req, res) {
   indexValues.next = res.paginatedResults.next;
   indexValues.previous = res.paginatedResults.previous;
   indexValues.pageNo = res.paginatedResults.pageNo;
+
+  if(res.paginatedResults.next)
+  indexValues.nextURL="/?search_value="+req.query.search_value+"&page="+res.paginatedResults.next.page;
+  if(res.paginatedResults.previous)
+  indexValues.prevURL="/?search_value="+req.query.search_value+"&page="+res.paginatedResults.previous.page;
+
+
+
   indexValues.rorj = res.paginatedResults.results;
   res.render("index", indexValues);
 
@@ -77,9 +41,113 @@ router.get('/courses', function (req, res) {
 })
 
 
+function paginatedMacthedResults() {
+
+  return (req, res, next) => {
+    
+    
+    let skillsearch=req.query.search_value;
+    if((!(skillsearch)) || skillsearch==="undefined"){
+      dbo.collection("jobsDetails").find({}).toArray(function (err, model) {
 
 
+        const limit = 2;
+        let page;
+        if (req.query.page) {
+          page = parseInt(req.query.page);
+        }
+        else {
+          page = 1;
+        }
+  
+        const startIndex = (page - 1) * limit;
+        const endIndex = page * limit;
+  
+        const results = {};
+        if (endIndex < model.length) {
+          results.next = {
+            page: page + 1,
+            limit: limit
+          };
+        }
+  
+        if (startIndex > 0) {
+          results.previous = {
+            page: page - 1,
+            limit: limit
+          };
+        }
+        results.pageNo = page;
+        results.results = model.slice(startIndex, endIndex);
+  
+        res.paginatedResults = results;
+        next();
+      });
+    }
+    else{
+      skillsearch=skillsearch.replaceAll(","," ")
+      let model=[];
+      async function asRetriveSearch(){
+        const aggCursor=dbo.collection("jobsDetails").aggregate([{ $match: { $text:{$search:skillsearch}}},{ $sort: { score: { $meta: "textScore" }}}])
+       for await (const doc of aggCursor) {
+        model.push(doc);
+          }
 
+
+          const limit = 2;
+          let page;
+          if (req.query.page) {
+            page = parseInt(req.query.page);
+          }
+          else {
+            page = 1;
+          }
+    
+          const startIndex = (page - 1) * limit;
+          const endIndex = page * limit;
+    
+          const results = {};
+          if (endIndex < model.length) {
+            results.next = {
+              page: page + 1,
+              limit: limit
+            };
+          }
+    
+          if (startIndex > 0) {
+            results.previous = {
+              page: page - 1,
+              limit: limit
+            };
+          }
+          results.pageNo = page;
+          results.results = model.slice(startIndex, endIndex);
+    
+          res.paginatedResults = results;
+          next();
+
+
+        }
+       asRetriveSearch();
+
+    }
+  }
+}
+
+router.get('/getsearch', paginatedMacthedResults(),async function (req, res) {
+  let search_value=req.query.search_value;
+  console.log(search_value)
+  res.json(res.paginatedResults)
+})
+
+
+router.post('/gethints',async function (req, res) {
+  
+  dbo.collection("skillsTypes").find({ skillName: { $regex: req.body[0], $options: "i" } }).toArray(function (err, hintValues) {
+    
+    res.send(hintValues);
+  })  
+})
 
 
 router.get('/login', function (req, res) {
