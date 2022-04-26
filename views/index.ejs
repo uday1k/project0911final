@@ -32,6 +32,10 @@
         
 
     <div class="container p-3 my-3 border">
+
+        <%if(!(rorj.length)){%>
+            <h1 class="d-flex justify-content-center">No Results Found</h1>
+            <%}%>
         <% for(let i=0;i<rorj.length;i++){%>
         <div class="card text-center">
             <div class="card-header font-weight-bold">
