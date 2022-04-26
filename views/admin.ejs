@@ -13,17 +13,11 @@
   <%- include('partials/footscript.ejs') %>
 
 <script>
-  
-  const myArrayValues = "<%=skillValues%>".split(",");
-  let dataValues=myArrayValues.map(function(value){
-    return parseInt(value);
-  })
-  
+  const myArrayValues = JSON.parse("<%=skillValues%>")  
   const myArrayNames = "<%=skillNames%>".split(",");
   
-  
   var data = [{
-  values: dataValues,
+  values: myArrayValues,
   labels: myArrayNames,
   type: 'pie'
 }];

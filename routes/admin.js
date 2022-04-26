@@ -38,13 +38,16 @@ router.get('/', async function (req, res) {
         }
       }
     ])
-    dataCountBySkillName = []
-    dataCountBySkillValue = []
+    let dataCountBySkillName = []
+    let dataCountBySkillValue = []
     for await (const doc of skillAggregate) {
       dataCountBySkillName.push(doc._id);
       dataCountBySkillValue.push(doc.count);
     }
-    res.render('admin', { "skillNames": dataCountBySkillName, "skillValues": dataCountBySkillValue });
+    let adminPageValues={}
+    adminPageValues.skillNames=(dataCountBySkillName);
+    adminPageValues.skillValues=JSON.stringify(dataCountBySkillValue);
+    res.render('admin', adminPageValues);
 
 
 })
