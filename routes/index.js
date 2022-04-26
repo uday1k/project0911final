@@ -26,8 +26,10 @@ router.get('/', paginatedMacthedResults(), function (req, res) {
   indexValues.nextURL="/?search_value="+req.query.search_value+"&page="+res.paginatedResults.next.page;
   if(res.paginatedResults.previous)
   indexValues.prevURL="/?search_value="+req.query.search_value+"&page="+res.paginatedResults.previous.page;
-
-
+    if(req.query.search_value==="undefined")
+    indexValues.search_id_value=undefined;
+    else
+      indexValues.search_id_value=req.query.search_value;
 
   indexValues.rorj = res.paginatedResults.results;
   res.render("index", indexValues);
