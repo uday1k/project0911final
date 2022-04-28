@@ -17,7 +17,7 @@
         <form  action="/" method="get">
             <div class="row">
                 <div class="col-2">
-                    <input class="form-control mr-sm-2" name="search_value" id="search_id" type="search" placeholder="Search" value="<%=search_id_value%>"onkeyup="showHint(this.value)">    
+                    <input class="form-control mr-sm-2" name="search_value" id="search_id" type="search" placeholder="Search" value="<%=search_id_value%>" oninput="showHint(this.value)">    
                     <ul class="list-unstyled" id="options_id">
         
                     </ul>
@@ -45,6 +45,8 @@
                 <h3 class="card-title"><%=rorj[i].companyName%></h3>
                 <p class="card-text">
                     qualification required:<b><%=rorj[i].qualificationRequired%></b><br>
+                    Experiance required:<b><%=rorj[i].experience%> year(s)</b><br>
+                    CTC offered:<b><%=rorj[i].ctcOffered%> LPA</b><br>
                     <%if(!(rorj[i].skillsRequired)){%>
                         <b>No Skills required</b><br>
                             <%} else if(!(Array.isArray(rorj[i].skillsRequired))){%>
@@ -57,7 +59,11 @@
                                     <%}%>
                     <%=rorj[i].jobDescription%>
                 </p>
+                <%if(auth){%>
                 <a href="<%=rorj[i].jobURL%>" target="_blank" class="btn btn-primary">Apply</a>
+                <%}else{%>
+                    <a class="btn btn-primary disabled">Login to Apply</a>
+                    <%}%>
             </div>
             <div class="card-footer text-muted font-weight-normal">
                Last Date and Time to Apply: <%=rorj[i].lastDateTimeToApply%>(IST)
