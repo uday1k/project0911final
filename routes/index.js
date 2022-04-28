@@ -22,14 +22,14 @@ router.get('/', paginatedMacthedResults(), function (req, res) {
   indexValues.previous = res.paginatedResults.previous;
   indexValues.pageNo = res.paginatedResults.pageNo;
 
-  if(res.paginatedResults.next)
-  indexValues.nextURL="/?search_value="+req.query.search_value+"&page="+res.paginatedResults.next.page;
-  if(res.paginatedResults.previous)
-  indexValues.prevURL="/?search_value="+req.query.search_value+"&page="+res.paginatedResults.previous.page;
-    if(req.query.search_value==="undefined")
-    indexValues.search_id_value=undefined;
-    else
-      indexValues.search_id_value=req.query.search_value;
+  if (res.paginatedResults.next)
+    indexValues.nextURL = "/?search_value=" + req.query.search_value + "&page=" + res.paginatedResults.next.page;
+  if (res.paginatedResults.previous)
+    indexValues.prevURL = "/?search_value=" + req.query.search_value + "&page=" + res.paginatedResults.previous.page;
+  if (req.query.search_value === "undefined")
+    indexValues.search_id_value = undefined;
+  else
+    indexValues.search_id_value = req.query.search_value;
 
   indexValues.rorj = res.paginatedResults.results;
   res.render("index", indexValues);
@@ -46,10 +46,10 @@ router.get('/courses', function (req, res) {
 function paginatedMacthedResults() {
 
   return (req, res, next) => {
-    
-    
-    let skillsearch=req.query.search_value;
-    if((!(skillsearch)) || skillsearch==="undefined"){
+
+
+    let skillsearch = req.query.search_value;
+    if ((!(skillsearch)) || skillsearch === "undefined") {
       dbo.collection("jobsDetails").find({}).toArray(function (err, model) {
 
 
@@ -61,10 +61,10 @@ function paginatedMacthedResults() {
         else {
           page = 1;
         }
-  
+
         const startIndex = (page - 1) * limit;
         const endIndex = page * limit;
-  
+
         const results = {};
         if (endIndex < model.length) {
           results.next = {
@@ -72,7 +72,7 @@ function paginatedMacthedResults() {
             limit: limit
           };
         }
-  
+
         if (startIndex > 0) {
           results.previous = {
             page: page - 1,
@@ -81,81 +81,81 @@ function paginatedMacthedResults() {
         }
         results.pageNo = page;
         results.results = model.slice(startIndex, endIndex);
-  
+
         res.paginatedResults = results;
         next();
       });
     }
-    else{
-      skillsearch=skillsearch.replaceAll(","," ")
-      let model=[];
-      async function asRetriveSearch(){
-        const aggCursor=dbo.collection("jobsDetails").aggregate([{ $match: { $text:{$search:skillsearch}}},{ $sort: { score: { $meta: "textScore" }}}])
-       for await (const doc of aggCursor) {
-        model.push(doc);
-          }
-
-
-          const limit = 2;
-          let page;
-          if (req.query.page) {
-            page = parseInt(req.query.page);
-          }
-          else {
-            page = 1;
-          }
-    
-          const startIndex = (page - 1) * limit;
-          const endIndex = page * limit;
-    
-          const results = {};
-          if (endIndex < model.length) {
-            results.next = {
-              page: page + 1,
-              limit: limit
-            };
-          }
-    
-          if (startIndex > 0) {
-            results.previous = {
-              page: page - 1,
-              limit: limit
-            };
-          }
-          results.pageNo = page;
-          results.results = model.slice(startIndex, endIndex);
-    
-          res.paginatedResults = results;
-          next();
-
-
+    else {
+      skillsearch = skillsearch.replaceAll(",", " ")
+      let model = [];
+      async function asRetriveSearch() {
+        const aggCursor = dbo.collection("jobsDetails").aggregate([{ $match: { $text: { $search: skillsearch } } }, { $sort: { score: { $meta: "textScore" } } }])
+        for await (const doc of aggCursor) {
+          model.push(doc);
         }
-       asRetriveSearch();
+
+
+        const limit = 2;
+        let page;
+        if (req.query.page) {
+          page = parseInt(req.query.page);
+        }
+        else {
+          page = 1;
+        }
+
+        const startIndex = (page - 1) * limit;
+        const endIndex = page * limit;
+
+        const results = {};
+        if (endIndex < model.length) {
+          results.next = {
+            page: page + 1,
+            limit: limit
+          };
+        }
+
+        if (startIndex > 0) {
+          results.previous = {
+            page: page - 1,
+            limit: limit
+          };
+        }
+        results.pageNo = page;
+        results.results = model.slice(startIndex, endIndex);
+
+        res.paginatedResults = results;
+        next();
+
+
+      }
+      asRetriveSearch();
 
     }
   }
 }
 
-router.get('/getsearch', paginatedMacthedResults(),async function (req, res) {
-  let search_value=req.query.search_value;
+router.get('/getsearch', paginatedMacthedResults(), async function (req, res) {
+  let search_value = req.query.search_value;
   console.log(search_value)
   res.json(res.paginatedResults)
 })
 
 
-router.post('/gethints',async function (req, res) {
-  let hintValues=[]
-  let skills= dbo.collection("skillsTypes").find({ skillName: { $regex: req.body[0], $options: "i" } }).toArray();
-  let  companies=dbo.collection("Companies").find({ companyName: { $regex: req.body[0], $options: "i" } }).toArray();
+router.post('/gethints', async function (req, res) {
+  let hintValues = []
+  let skills = dbo.collection("skillsTypes").find({ skillName: { $regex: req.body[0], $options: "i" } }).toArray();
+  let companies = dbo.collection("Companies").find({ companyName: { $regex: req.body[0], $options: "i" } }).toArray();
 
-  let hints=await Promise.all([skills,companies])
+  let hints = await Promise.all([skills, companies])
 
   await Promise.all([
-  hints[0].forEach(o => {hintValues.push(o.skillName);}),
-  hints[1].forEach(o => {hintValues.push(o.companyName);})
+    hints[0].forEach(o => { hintValues.push(o.skillName); }),
+    hints[1].forEach(o => { hintValues.push(o.companyName); })
   ])
-   res.send(hintValues);
-  
+  res.send(hintValues);
+
 })
 
 
@@ -184,17 +184,17 @@ router.post('/checklogin', async function (req, res) {
     res.send("emailNotFound")
   }
   else if (result[2] != null) {
-    //bcrypt.compare(req.body.login_password, result[2].adminPassword).then(function(resultOfPasswordComparison) {
-    if (result[2].adminPassword === login_password_value) {
-      res.locals.auth = req.session.auth = true;
-      res.locals.role = req.session.role = "admin";
-      req.flash('checkFlash', 'succesfully loggedIn');
-      res.send("formSubmitted")
-    }
-    else {
-      res.send("incorrectPassword")
-    }
-    //})
+    bcrypt.compare(login_password_value, result[2].adminPassword).then(function (resultOfPasswordComparison) {
+      if (resultOfPasswordComparison) {
+        res.locals.auth = req.session.auth = true;
+        res.locals.role = req.session.role = "admin";
+        req.flash('checkFlash', 'succesfully loggedIn');
+        res.send("formSubmitted")
+      }
+      else {
+        res.send("incorrectPassword")
+      }
+    })
   }
   else if (result[0] === null) {
     if (result[1].status != "accepted") {
@@ -232,7 +232,7 @@ router.post('/checklogin', async function (req, res) {
 
 
   }
-  
+
 
 
 
@@ -243,19 +243,19 @@ router.post('/validatelogin', async function (req, res) {
 
   const userData = dbo.collection("Users").findOne({ userEmail: req.body.login_email })
   const companyData = dbo.collection("Companies").findOne({ companyEmail: req.body.login_email })
-  const adminData =dbo.collection("Admins").findOne({ adminEmail: req.body.login_email })
-  
-
-  
-    let result = await Promise.all([userData, companyData, adminData])
+  const adminData = dbo.collection("Admins").findOne({ adminEmail: req.body.login_email })
 
 
-    if (result[0] === null && result[1] == null && result[2] == null) {
-      res.render("loginpag", { "loginCheckDet": "Email ID Not Found", "colorOfSpan": true });
-    }
-    else if (result[2] != null) {
-      //bcrypt.compare(req.body.login_password, result[2].adminPassword).then(function(resultOfPasswordComparison) {
-      if (result[2].adminPassword === req.body.login_password) {
+
+  let result = await Promise.all([userData, companyData, adminData])
+
+
+  if (result[0] === null && result[1] == null && result[2] == null) {
+    res.render("loginpag", { "loginCheckDet": "Email ID Not Found", "colorOfSpan": true });
+  }
+  else if (result[2] != null) {
+    bcrypt.compare(req.body.login_password, result[2].adminPassword).then(function (resultOfPasswordComparison) {
+      if (resultOfPasswordComparison) {
         res.locals.auth = req.session.auth = true;
         res.locals.role = req.session.role = "admin";
         req.flash('checkFlash', 'succesfully loggedIn');
@@ -264,46 +264,46 @@ router.post('/validatelogin', async function (req, res) {
       else {
         res.render("loginpag", { "loginCheckDet": "Incorrect Password", "colorOfSpan": true });
       }
-      //})
+    })
+  }
+  else if (result[0] === null) {
+    if (result[1].status != "accepted") {
+      res.render("loginpag", { "loginCheckDet": "You are not Approved!", "colorOfSpan": true });
     }
-    else if (result[0] === null) {
-      if (result[1].status != "accepted") {
-        res.render("loginpag", { "loginCheckDet": "You are not Approved!", "colorOfSpan": true });
-      }
-      else {
-        bcrypt.compare(req.body.login_password, result[1].companyPassword).then(function (resultOfPasswordComparison) {
-          if (resultOfPasswordComparison) {
-            res.locals.auth = req.session.auth = true;
-            res.locals.role = req.session.role = "company";
-            res.locals.companyName = req.session.companyName = result[1].companyName;
-            req.flash('checkFlash', 'succesfully loggedIn');
-            res.redirect('/');
-          }
-          else {
-            res.render("loginpag", { "loginCheckDet": "Incorrect Password", "colorOfSpan": true });
-          }
-        })
-      }
-    }
-    else if (result[1] === null) {
-
-      bcrypt.compare(req.body.login_password, result[0].userPassword).then(function (resultOfPasswordComparison) {
+    else {
+      bcrypt.compare(req.body.login_password, result[1].companyPassword).then(function (resultOfPasswordComparison) {
         if (resultOfPasswordComparison) {
           res.locals.auth = req.session.auth = true;
-          res.locals.role = req.session.role = "user";
+          res.locals.role = req.session.role = "company";
+          res.locals.companyName = req.session.companyName = result[1].companyName;
           req.flash('checkFlash', 'succesfully loggedIn');
           res.redirect('/');
         }
         else {
           res.render("loginpag", { "loginCheckDet": "Incorrect Password", "colorOfSpan": true });
-
         }
-
       })
-
-
     }
-    
+  }
+  else if (result[1] === null) {
+
+    bcrypt.compare(req.body.login_password, result[0].userPassword).then(function (resultOfPasswordComparison) {
+      if (resultOfPasswordComparison) {
+        res.locals.auth = req.session.auth = true;
+        res.locals.role = req.session.role = "user";
+        req.flash('checkFlash', 'succesfully loggedIn');
+        res.redirect('/');
+      }
+      else {
+        res.render("loginpag", { "loginCheckDet": "Incorrect Password", "colorOfSpan": true });
+
+      }
+
+    })
+
+
+  }
+
 
 });
 
