@@ -106,7 +106,10 @@
                     <%}%>
                   </select>
                 </div>
-                
+                <div class="form-group">
+                  <label for="idurl">Job URL</label>
+                  <input type="url" name="joburl" class="form-control" id="idurl" value="<%=urlGiven%>" placeholder="Enter Job URL">
+                </div>
                 <div class="form-group">
                   <label for="idexp">Experience required</label>
                   <input type="text" name="jobexp" class="form-control" id="idexp" value="<%=experienceGiven%>" placeholder="Enter in Years">
@@ -184,6 +187,10 @@
         jobdes: {
           required: true,
         },
+        joburl: {
+          required: true,
+          url:true,
+        },
         jobexp: {
           required: true,
           number:true,
@@ -212,6 +219,10 @@
         },
         jobdes: {
           required: "Please Enter Description about Job"
+        },
+        joburl: {
+          required: "Enter URL of JOB",
+          url:"Enter Valid URL",
         },
         jobexp: {
           required: "Please provide a job experience",

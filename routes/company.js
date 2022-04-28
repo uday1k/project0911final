@@ -168,6 +168,7 @@ router.get('/insertjob/:idofjob?', checkCompanyAuth, async function (req, res) {
     jobDetails.qualificationSelected = null;
     jobDetails.jobDescriptionGiven = null;
     jobDetails.skillsSelected = null;
+    jobDetails.urlGiven = null;
     jobDetails.experienceGiven = null;
     jobDetails.lastDateTimeToApplyGiven = null;
     jobDetails.ctcMentioned = null;
@@ -191,6 +192,7 @@ router.get('/insertjob/:idofjob?', checkCompanyAuth, async function (req, res) {
     jobDetails.qualificationSelected = jobDetailsofID.qualificationRequired;
     jobDetails.jobDescriptionGiven = jobDetailsofID.jobDescription;
     jobDetails.skillsSelected = jobDetailsofID.skillsRequired;
+    jobDetails.urlGiven = jobDetailsofID.jobURL;
     jobDetails.experienceGiven = jobDetailsofID.experience;
     let dt = jobDetailsofID.lastDateTimeToApply;
     let datech = (dt.slice(6, 10) + '-' + dt.slice(3, 5) + '-' + dt.slice(0, 2) + 'T' + dt.slice(12, 14) + ':' + dt.slice(15, 17));
@@ -216,6 +218,7 @@ router.post('/savejob', checkCompanyAuth, async function (req, res) {
     insertJobDetails.qualificationRequired = req.body.jobqual;
     insertJobDetails.jobDescription = req.body.jobdes;
     insertJobDetails.skillsRequired = req.body.jobskillsrequired;
+    insertJobDetails.jobURL=req.body.joburl;
     insertJobDetails.experience = req.body.jobexp;
     insertJobDetails.lastDateTimeToApply = new Date(req.body.jobdatetime).toLocaleString();
     insertJobDetails.ctcOffered = req.body.jobctc;
@@ -236,6 +239,7 @@ router.post('/savejob', checkCompanyAuth, async function (req, res) {
         deptType: req.body.jobdept, roleType: req.body.jobrole, qualificationRequired: req.body.jobqual
         , jobDescription: req.body.jobdes
         , skillsRequired: req.body.jobskillsrequired
+        , jobURL: req.body.joburl
         , experience: req.body.jobexp
         , lastDateTimeToApply: new Date(req.body.jobdatetime).toLocaleString()
         , ctcOffered: req.body.jobctc
