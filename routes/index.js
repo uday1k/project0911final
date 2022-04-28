@@ -232,9 +232,7 @@ router.post('/checklogin', async function (req, res) {
 
 
   }
-  else {
-
-  }
+  
 
 
 
@@ -305,10 +303,7 @@ router.post('/validatelogin', async function (req, res) {
 
 
     }
-    else {
-
-    }
-  
+    
 
 });
 

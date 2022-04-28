@@ -6,6 +6,8 @@ const bcrypt = require('bcrypt');
 const saltRounds = 10;
 const { ObjectId } = require('mongodb');
 
+var transporter=require("./emailsent")
+
 var mongoUtil = require('./mongoDB');
 var dbo = mongoUtil.getDb();
 
@@ -75,6 +77,7 @@ router.post('/register/:type?/:id?', async function (req, res) {
       insertCompanyDetails.companyId = new Date().getTime() + "" + Math.floor(100000 + Math.random() * 900000);
       await dbo.collection("Companies").insertOne(insertCompanyDetails, function (err, result) {
         if (err) throw err;
+        req.flash('checkFlash', 'Company Successfully Registered');
         res.redirect('/')
       })
     }
@@ -90,7 +93,24 @@ router.post('/register/:type?/:id?', async function (req, res) {
 
   }
   else {
+
+    const companyDetails=await dbo.collection('Companies').findOne({ "_id": ObjectId(id) })
     await dbo.collection('Companies').updateOne({ "_id": ObjectId(id) }, { $set: { status: type } }, function (err, resultOfUpdt) {
+      let mailOptions = {
+        from: 'kommineniuday449@gmail.com',
+        to: companyDetails.companyEmail,
+        subject: 'Company Status',
+        text: companyDetails.companyName+" status is updated to "+type,
+      };
+      
+      transporter.sendMail(mailOptions, function(error, info){
+        if (error) {
+          console.log(error);
+        } else {
+          console.log('Email sent: ' + info.response);
+        }
+      });
+
       res.redirect('/admin/companylist')
     })
 
