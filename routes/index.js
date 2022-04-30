@@ -1,7 +1,6 @@
 const express = require('express');
 const router = express.Router();
 const bcrypt = require('bcrypt');
-var qs = require('querystring');
 const jwt = require('jsonwebtoken');
 
 var mongoUtil = require('./mongoDB');
