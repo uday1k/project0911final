@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const bcrypt = require('bcrypt');
 var qs = require('querystring');
-
+const jwt = require('jsonwebtoken');
 
 var mongoUtil = require('./mongoDB');
 var dbo = mongoUtil.getDb();
@@ -314,6 +314,48 @@ router.get('/logout', function (req, res) {
   req.session.destroy();
   res.redirect("/");
 })
+
+
+
+router.get('/test', async function (req, res) {
+  let jwtSecretKey = process.env.JWT_SECRET_KEY;
+  let data = {
+      test:"testing",
+      userId: 1,
+  }
+
+  const token = jwt.sign(data, jwtSecretKey);
+  res.cookie("tokenData", token);
+  res.send(token);
+})
+
+
+
+
+router.get("/validateToken", (req, res) => {
+  
+
+  
+  let jwtSecretKey = process.env.JWT_SECRET_KEY;
+  
+  
+
+  try {
+      
+    const token = req.cookies.tokenData;
+      const verified =  jwt.verify(token, jwtSecretKey)
+      if(verified){
+        console.log(verified)
+          return res.send("Successfully Verified");
+      }else{
+         
+          return res.status(401).send(error);
+      }
+  } catch (error) {
+      
+      return res.status(401).send(error);
+  }
+});
 
 
 module.exports = router;
