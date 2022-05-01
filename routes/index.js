@@ -343,20 +343,4 @@ router.get('/logout', function (req, res) {
   res.redirect("/");
 })
 
-
-
-router.get('/test', async function (req, res) {
-  let jwtSecretKey = process.env.JWT_SECRET_KEY;
-  let data = {
-    test: "testing",
-    userId: 1,
-  }
-
-  const token = jwt.sign(data, jwtSecretKey);
-  res.cookie("tokenData", token);
-  res.send(token);
-})
-
-
-
 module.exports = router;

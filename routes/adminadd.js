@@ -17,7 +17,7 @@ router.use((req, res, next) => {
       res.locals.role = null;
       res.locals.flash = null;
       res.locals.companyName = null;
-      res.redirect("/login");
+      return next(createError(403, 'Only authorized user can view this page.'));
     }
     else {
   
