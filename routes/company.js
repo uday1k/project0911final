@@ -2,6 +2,11 @@ const express = require('express');
 const router = express.Router();
 var createError = require('http-errors');
 
+
+
+const jwt = require('jsonwebtoken');
+
+
 const bcrypt = require('bcrypt');
 const saltRounds = 10;
 const { ObjectId } = require('mongodb');
@@ -15,23 +20,42 @@ var dbo = mongoUtil.getDb();
 
 
 const checkCompanyAuth = (req, res, next) => {
-  if (!(req.session.auth)) {
-    res.render("loginpag", { "loginCheckDet": "Session Expired! Login Again", "colorOfSpan": true });
-  }
-  else if (req.session.role === "company") {
-    next();
+
+
+  if (!(req.cookies.token)) {
+    res.locals.auth = null;
+    res.locals.role = null;
+    res.locals.flash = null;
+    res.locals.companyName = null;
+    res.redirect("/login");
   }
   else {
-    return next(createError(403, 'Only authorized user can view this page.'))
+
+    let jwtSecretKey = process.env.JWT_SECRET_KEY;
+    const token = req.cookies.token;
+    verified = jwt.verify(token, jwtSecretKey, function (err, result) {
+      return result
+    })
+
+    res.locals.auth = verified.auth || null;
+    res.locals.role = verified.role || null;
+    res.locals.flash = req.query.flash || null;
+    res.locals.companyName = verified.companyName || null;
+
+    if (res.locals.role === "company") {
+      next();
+    }
+    else {
+      return next(createError(403, 'Only authorized user can view this page.'));
+    }
   }
+
 }
 
 
 router.get('/myjobs', checkCompanyAuth, async function (req, res) {
-  res.locals.auth = req.session.auth;
-  res.locals.role = req.session.role;
-
-  await dbo.collection("jobsDetails").aggregate([{ $match: { companyName: req.session.companyName } }]).toArray(function (err, retrivedValues) {
+  
+  await dbo.collection("jobsDetails").aggregate([{ $match: { companyName: res.locals.companyName } }]).toArray(function (err, retrivedValues) {
     if (err) throw err;
     let myJobValues = {}
     myJobValues.rorj = retrivedValues;
@@ -77,8 +101,7 @@ router.post('/register/:type?/:id?', async function (req, res) {
       insertCompanyDetails.companyId = new Date().getTime() + "" + Math.floor(100000 + Math.random() * 900000);
       await dbo.collection("Companies").insertOne(insertCompanyDetails, function (err, result) {
         if (err) throw err;
-        req.flash('checkFlash', 'Company Successfully Registered');
-        res.redirect('/')
+        res.redirect('/?flash=Company Successfully Registered')
       })
     }
     else {
@@ -223,12 +246,11 @@ router.post('/savejob', checkCompanyAuth, async function (req, res) {
     insertJobDetails.lastDateTimeToApply = new Date(req.body.jobdatetime).toLocaleString();
     insertJobDetails.ctcOffered = req.body.jobctc;
     insertJobDetails.postedDateTime = new Date().toLocaleString();
-    insertJobDetails.companyName = req.session.companyName;
+    insertJobDetails.companyName = req.locals.companyName;
 
     await dbo.collection("jobsDetails").insertOne(insertJobDetails, function (err, resultToCheckDetailsInserted) {
       if (err) throw err;
-      req.flash('checkFlash', 'Job Successfully Published');
-      res.redirect("/");
+      res.redirect("/?flash=Job Successfully Published");
     })
   }
   else {
@@ -249,8 +271,7 @@ router.post('/savejob', checkCompanyAuth, async function (req, res) {
     
       await dbo.collection("jobsDetails").updateOne(ObjectContainingIDtobeEffected, newvalues, function (err, resultToCheckDetailsInserted) {
         if (err) throw err;
-        req.flash('checkFlash', 'Job Successfully Updated');
-        res.redirect("/");
+        res.redirect("/?flash=Job Successfully Updated");
       })
     
 

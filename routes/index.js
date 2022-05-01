@@ -6,15 +6,37 @@ const jwt = require('jsonwebtoken');
 var mongoUtil = require('./mongoDB');
 var dbo = mongoUtil.getDb();
 
+let verified;
 
 
+router.use((req, res, next) => {
+  if (!(req.cookies.token)) {
+    res.locals.auth=null;
+    res.locals.role=null;
+    res.locals.flash = null;
+    res.locals.companyName=null;
+    next();
+  }
+  else{
+    
+    let jwtSecretKey = process.env.JWT_SECRET_KEY;
+    const token = req.cookies.token;
+
+    verified = jwt.verify(token, jwtSecretKey, function (err, result) {
+      return result
+    })
+    console.log(req.app.locals)
+    res.locals.auth=verified.auth||null;
+    res.locals.role=verified.role||null;
+    res.locals.flash=req.query.flash||null;
+    res.locals.companyName=verified.companyName||null;
+    next();
+  }
+})
 
 
 router.get('/', paginatedMacthedResults(), function (req, res) {
-  res.locals.auth = req.session.auth;
-  res.locals.role = req.session.role;
-  res.locals.flashesValues = req.flash('checkFlash');
-
+  
   let indexValues = {}
 
   indexValues.next = res.paginatedResults.next;
@@ -36,8 +58,6 @@ router.get('/', paginatedMacthedResults(), function (req, res) {
 })
 
 router.get('/courses', function (req, res) {
-  res.locals.auth = req.session.auth;
-  res.locals.role = req.session.role;
   res.render("courses");
 })
 
@@ -159,7 +179,6 @@ router.post('/gethints', async function (req, res) {
 
 
 router.get('/login', function (req, res) {
-  req.session.auth = false;
   res.render("loginpag", { "loginCheckDet": "", "colorOfSpan": true });
 })
 
@@ -185,9 +204,6 @@ router.post('/checklogin', async function (req, res) {
   else if (result[2] != null) {
     bcrypt.compare(login_password_value, result[2].adminPassword).then(function (resultOfPasswordComparison) {
       if (resultOfPasswordComparison) {
-        res.locals.auth = req.session.auth = true;
-        res.locals.role = req.session.role = "admin";
-        req.flash('checkFlash', 'succesfully loggedIn');
         res.send("formSubmitted")
       }
       else {
@@ -202,10 +218,6 @@ router.post('/checklogin', async function (req, res) {
     else {
       bcrypt.compare(login_password_value, result[1].companyPassword).then(function (resultOfPasswordComparison) {
         if (resultOfPasswordComparison) {
-          res.locals.auth = req.session.auth = true;
-          res.locals.role = req.session.role = "company";
-          res.locals.companyName = req.session.companyName = result[1].companyName;
-          req.flash('checkFlash', 'succesfully loggedIn');
           res.send("formSubmitted")
         }
         else {
@@ -218,9 +230,6 @@ router.post('/checklogin', async function (req, res) {
 
     bcrypt.compare(login_password_value, result[0].userPassword).then(function (resultOfPasswordComparison) {
       if (resultOfPasswordComparison) {
-        res.locals.auth = req.session.auth = true;
-        res.locals.role = req.session.role = "user";
-        req.flash('checkFlash', 'succesfully loggedIn');
         res.send("formSubmitted")
       }
       else {
@@ -255,10 +264,17 @@ router.post('/validatelogin', async function (req, res) {
   else if (result[2] != null) {
     bcrypt.compare(req.body.login_password, result[2].adminPassword).then(function (resultOfPasswordComparison) {
       if (resultOfPasswordComparison) {
-        res.locals.auth = req.session.auth = true;
-        res.locals.role = req.session.role = "admin";
-        req.flash('checkFlash', 'succesfully loggedIn');
-        res.redirect('/admin');
+        
+        let jwtSecretKey = process.env.JWT_SECRET_KEY;
+        let data = {
+          email:req.body.login_email ,
+          auth:true,
+          role: "admin",
+        }
+
+        const token = jwt.sign(data, jwtSecretKey);
+        res.cookie("token", token);
+        res.redirect('/admin?flash=succesfully loggedIn');
       }
       else {
         res.render("loginpag", { "loginCheckDet": "Incorrect Password", "colorOfSpan": true });
@@ -272,11 +288,17 @@ router.post('/validatelogin', async function (req, res) {
     else {
       bcrypt.compare(req.body.login_password, result[1].companyPassword).then(function (resultOfPasswordComparison) {
         if (resultOfPasswordComparison) {
-          res.locals.auth = req.session.auth = true;
-          res.locals.role = req.session.role = "company";
-          res.locals.companyName = req.session.companyName = result[1].companyName;
-          req.flash('checkFlash', 'succesfully loggedIn');
-          res.redirect('/');
+          let jwtSecretKey = process.env.JWT_SECRET_KEY;
+          let data = {
+            email:req.body.login_email ,
+            auth:true,
+            role: "company",
+            companyName:result[1].companyName,
+          }
+  
+          const token = jwt.sign(data, jwtSecretKey);
+          res.cookie("token", token);
+          res.redirect('/?flash=succesfully loggedIn');
         }
         else {
           res.render("loginpag", { "loginCheckDet": "Incorrect Password", "colorOfSpan": true });
@@ -288,10 +310,17 @@ router.post('/validatelogin', async function (req, res) {
 
     bcrypt.compare(req.body.login_password, result[0].userPassword).then(function (resultOfPasswordComparison) {
       if (resultOfPasswordComparison) {
-        res.locals.auth = req.session.auth = true;
-        res.locals.role = req.session.role = "user";
-        req.flash('checkFlash', 'succesfully loggedIn');
-        res.redirect('/');
+
+        let jwtSecretKey = process.env.JWT_SECRET_KEY;
+        let data = {
+          email:req.body.login_email ,
+          auth:true,
+          role: "user",
+        }
+
+        const token = jwt.sign(data, jwtSecretKey);
+        res.cookie("token", token);
+        res.redirect('/?flash=succesfully loggedIn');
       }
       else {
         res.render("loginpag", { "loginCheckDet": "Incorrect Password", "colorOfSpan": true });
@@ -310,7 +339,7 @@ router.post('/validatelogin', async function (req, res) {
 
 
 router.get('/logout', function (req, res) {
-  req.session.destroy();
+  res.clearCookie("token");
   res.redirect("/");
 })
 
@@ -319,8 +348,8 @@ router.get('/logout', function (req, res) {
 router.get('/test', async function (req, res) {
   let jwtSecretKey = process.env.JWT_SECRET_KEY;
   let data = {
-      test:"testing",
-      userId: 1,
+    test: "testing",
+    userId: 1,
   }
 
   const token = jwt.sign(data, jwtSecretKey);
@@ -328,33 +357,6 @@ router.get('/test', async function (req, res) {
   res.send(token);
 })
 
-
-
-
-router.get("/validateToken", (req, res) => {
-  
-
-  
-  let jwtSecretKey = process.env.JWT_SECRET_KEY;
-  
-  
-
-  try {
-      
-    const token = req.cookies.tokenData;
-      const verified =  jwt.verify(token, jwtSecretKey)
-      if(verified){
-        console.log(verified)
-          return res.send("Successfully Verified");
-      }else{
-         
-          return res.status(401).send(error);
-      }
-  } catch (error) {
-      
-      return res.status(401).send(error);
-  }
-});
 
 
 module.exports = router;
