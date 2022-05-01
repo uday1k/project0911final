@@ -43,7 +43,7 @@ router.use((req, res, next) => {
 
 router.get('/', async function (req, res) {
 
-console.log(res.locals)
+  console.log(res.locals)
   let skillAggregate = await dbo.collection("jobsDetails").aggregate([
     {
       '$unwind': {
@@ -67,6 +67,44 @@ console.log(res.locals)
   let adminPageValues = {}
   adminPageValues.skillNames = (dataCountBySkillName);
   adminPageValues.skillValues = JSON.stringify(dataCountBySkillValue);
+
+
+  let CTCAggregate = await dbo.collection("jobsDetails").aggregate([
+    {
+      '$project': {
+        'ctcOffered': 1
+      }
+    }, {
+      '$group': {
+        '_id': '$ctcOffered',
+        'count': {
+          '$sum': 1
+        }
+      }
+    }
+  ])
+  ctcRangeCount = [0, 0, 0, 0, 0]
+  for await (const doc of CTCAggregate) {
+
+    if (parseFloat(doc._id) < 5) {
+      ctcRangeCount[0] += doc.count;
+    }
+    else if (parseFloat(doc._id) >= 5 && parseFloat(doc._id) < 10) {
+      ctcRangeCount[1] += doc.count;
+    }
+    else if (parseFloat(doc._id) >= 10 && parseFloat(doc._id) < 20) {
+      ctcRangeCount[2] += doc.count;
+    }
+    else if (parseFloat(doc._id) >= 20 && parseFloat(doc._id) < 30) {
+      ctcRangeCount[3] += doc.count;
+    }
+    else {
+      ctcRangeCount[4] += doc.count;
+    }
+  }
+
+  adminPageValues.ctcRangeCount = JSON.stringify(ctcRangeCount);
+
   res.render('admin', adminPageValues);
 
 

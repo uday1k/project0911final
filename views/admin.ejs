@@ -8,27 +8,83 @@
   <%- include('partials/adminNavbar.ejs',{pageName:"home"}) %>
   <%- include('partials/dataAlerts.ejs') %>
   <div class="d-flex justify-content-center">
-    <div id='myDiv1'><!-- Plotly chart will be drawn inside this DIV --></div>
+    <div id='myDiv1'></div>
+    <div id='myDiv2'></div>
   </div>
+
+
+
   <%- include('partials/footscript.ejs') %>
 
+
+
+  
+
+
 <script>
-  const myArrayValues = JSON.parse("<%=skillValues%>")  
-  const myArrayNames = "<%=skillNames%>".split(",");
+  const Values = JSON.parse("<%=skillValues%>")  
+  const Names = "<%=skillNames%>".split(",");
   
   var data = [{
-  values: myArrayValues,
-  labels: myArrayNames,
+  values: Values,
+  labels: Names,
   type: 'pie'
 }];
 
 var layout = {
   title: 'Skills In Demand',
-  height: 400,
-  width: 500
+  height: 700,
+  width: 700
 };
 
 Plotly.newPlot('myDiv1', data, layout);
+
+
+
+
+const BarValues = JSON.parse("<%=ctcRangeCount%>")  
+  
+  var data1 = [
+  {
+    x: ['less than 5', '5-10', '10-20','30-40','above 40'],
+    y: BarValues,
+    marker:{
+    color: ["red","green","violet","yellow","blue"],
+    },
+    type: 'bar'
+  }
+];
+
+
+var layout1 = {
+  title: 'CTC Offered By Companies',
+  height: 700,
+  width: 700,
+  xaxis: {
+    title: {
+      text: 'CTC Offered',
+      font: {
+        family: 'Courier New, monospace',
+        size: 18,
+        color: '#7f7f7f'
+      }
+    },
+  },
+  yaxis: {
+    title: {
+      text: 'Numer of Companies',
+      font: {
+        family: 'Courier New, monospace',
+        size: 18,
+        color: '#7f7f7f'
+      }
+    }
+  }
+};
+
+Plotly.newPlot('myDiv2', data1, layout1);
+
+
 </script>
 
 </body>
