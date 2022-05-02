@@ -6,7 +6,7 @@ const jwt = require('jsonwebtoken');
 var mongoUtil = require('./mongoDB');
 var dbo = mongoUtil.getDb();
 
-let verified;
+
 
 
 router.use((req, res, next) => {
