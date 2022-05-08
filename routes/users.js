@@ -55,7 +55,6 @@ router.post('/register/:id?', async function (req, res) {
 
 })
 
-
 router.post('/checkuserdetails', async function (req, res) {
 
 

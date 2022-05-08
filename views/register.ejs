@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <%- include('partials/head.ejs', {title:"Register"}) %>
+</head>
+
+<body>
+
+    <!-- Main content -->
+    <section class="content">
+        <div class="container-fluid">
+            <div class="row">
+                <!-- left column -->
+                <div class="col-md-12">
+                    <!-- jquery validation -->
+                    <div class="card card-primary">
+                        <div class="card-header">
+                            <h3 class="card-title">Registration Form</h3>
+                        </div>
+                        <!-- /.card-header -->
+                        <!-- form start -->
+                        <form id="quickForm" action="/registerdata" method="post">
+                            <div class="card-body">
+
+
+                                <div class="form-group">
+                                   <b>Type of User? &nbsp;&nbsp;</b> 
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="radio" name="typeOfAccount"
+                                            id="user_radio_id" value="user" checked>
+                                        <label class="form-check-label" for="user_radio_id">
+                                            user
+                                        </label>
+                                    </div>
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="radio" name="typeOfAccount"
+                                            id="company_radio_id" value="company">
+                                        <label class="form-check-label" for="company_radio_id">
+                                            company
+                                        </label>
+                                    </div>
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="radio" name="typeOfAccount"
+                                            id="admin_radio_id" value="admin">
+                                        <label class="form-check-label" for="admin_radio_id">
+                                            admin
+                                        </label>
+                                    </div>
+
+
+
+                                </div>
+
+                                <div class="form-group" style="display: none;" id="div_id_of_company">
+                                    <label for="id_companyName">Company Name</label>
+                                    <input type="text" name="company_name" class="form-control" id="id_companyName"
+                                        placeholder="Enter company name">
+                                </div>
+
+
+                                <div class="form-group mb-0">
+                                    <div class="custom-control custom-checkbox">
+                                        <input type="checkbox" name="terms" class="custom-control-input"
+                                            id="exampleCheck1">
+                                        <label class="custom-control-label" for="exampleCheck1">I agree to the <a
+                                                href="#">terms of service</a>.</label>
+                                    </div>
+                                </div>
+
+                            </div>
+                            <!-- /.card-body -->
+                            <div class="card-footer">
+                                <button type="submit" class="btn btn-primary">Submit</button>
+                            </div>
+                        </form>
+                    </div>
+                    <!-- /.card -->
+                </div>
+                <!--/.col (left) -->
+
+                <!--/.col (right) -->
+            </div>
+            <!-- /.row -->
+        </div><!-- /.container-fluid -->
+    </section>
+
+
+
+
+    <%- include('partials/footscript.ejs') %>
+
+
+        <!-- Page specific script -->
+        <script>
+
+$("[name='typeOfAccount']").change(function () {
+        if ($('#company_radio_id').is(':checked')) {
+            $('#div_id_of_company').show();
+        }
+        else{
+            $('#div_id_of_company').hide();
+            $('#id_companyName').val('');
+        }
+    });
+            $(function () {
+
+                $('#quickForm').validate({
+                    rules: {
+
+                        company_name:{
+                            required:true,
+                        },
+                        terms: {
+                            required: true
+                        },
+                    },
+                    messages: {
+                        company_name: {
+                            required: "Please fill company name",
+                        },
+                        terms: "Please accept our terms"
+                    },
+                    errorElement: 'span',
+                    errorPlacement: function (error, element) {
+                        error.addClass('invalid-feedback');
+                        element.closest('.form-group').append(error);
+                    },
+                    highlight: function (element, errorClass, validClass) {
+                        $(element).addClass('is-invalid');
+                    },
+                    unhighlight: function (element, errorClass, validClass) {
+                        $(element).removeClass('is-invalid');
+                    }
+                });
+            });
+
+
+
+        </script>
+
+
+</body>
+
+</html>

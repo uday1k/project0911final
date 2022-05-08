@@ -11,17 +11,22 @@
     "connect-flash": "^0.1.1",
     "connect-mongodb-session": "^3.1.1",
     "cookie-parser": "~1.4.4",
+    "cookie-session": "^2.0.0",
     "debug": "~2.6.9",
     "dotenv": "^16.0.0",
     "ejs": "^3.1.7",
     "express": "~4.16.1",
     "express-session": "^1.17.2",
+    "google-auth-library": "^8.0.2",
     "http-errors": "~1.6.3",
     "jade": "^0.29.0",
     "jsonwebtoken": "^8.5.1",
     "mongodb": "^4.4.1",
     "morgan": "~1.9.1",
     "nodemailer": "^6.7.3",
+    "passport": "^0.5.2",
+    "passport-google-oauth": "^2.0.0",
+    "passport-google-oauth20": "^2.0.0",
     "uuid": "^8.3.2"
   }
 }

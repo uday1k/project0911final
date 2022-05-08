@@ -1,5 +1,5 @@
 <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
-  <a class="navbar-brand" href="/"> <img class="bg-light"src="/dist/img/logojob.png" width="30" height="30"
+  <a class="navbar-brand" href="/"> <img class="bg-light"src="/dist/img/logojob.png" width="80" height="38"
           class="d-inline-block align-top" alt="">
        Jobs Posting Portal</a>
   <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
@@ -32,7 +32,12 @@
         
         <%if(!(locals.auth)){%>
 
-                              <%if(pageName!='login'){%>
+          <li class="nav-item">
+                <a class="btn btn-light mr-2" href="/login" role="button" style="text-transform:none"><img width="20px" style="margin-bottom:3px; margin-right:5px" alt="Google sign-in" src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/53/Google_%22G%22_Logo.svg/512px-Google_%22G%22_Logo.svg.png" />Sign-in</a>
+          
+          </li>
+
+                              <%if(pageName!='login' && false){%>
                             <li class="nav-item">
                               <div class="dropdown">
                                 <button class="btn btn-light dropdown-toggle mr-5" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -45,7 +50,7 @@
                                 </div>
                               </div>
                           </li>
-                          <%}else{%>
+                          <%}else if(false){%>
                             <li class="nav-item">
                               <div class="dropdown">
                                 <button class="btn btn-light dropdown-toggle mr-5" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -60,6 +65,7 @@
                             <%}%>
 
           <%} else if(locals.role==="company"){%>
+            
             <li class="nav-item mr-2">
               <a href="/company/myjobs" role="button" class="btn btn-light">My Jobs</a>
           </li>
@@ -70,18 +76,27 @@
               <a href="/logout" role="button" class="btn btn-light">Logout</a>
           </li>
           
-
+          <li class="nav-item mr-2">
+            <img class="rounded-circle"  width="38px" height="38px" src="<%=locals.image%>" data-holder-rendered="true" alt="pro">
+          </li>
           <%} else if(locals.role==="user"){%>
+            
             <li class="nav-item mr-2">
               <a href="/logout" role="button" class="btn btn-light">Logout</a>
           </li>
-            
+          <li class="nav-item mr-2">
+            <img class="rounded-circle"  width="38px" height="38px" src="<%=locals.image%>" data-holder-rendered="true" alt="pro">
+          </li>
           <%}else if(locals.role==="admin"){%>
+            
             <li class="nav-item mr-2">
               <a href="/admin" role="button" class="btn btn-outline-light">Admin Portal</a>
           </li>
           <li class="nav-item mr-2">
             <a href="/logout" role="button" class="btn btn-outline-light">Logout</a>
+        </li>
+        <li class="nav-item mr-2">
+          <img class="rounded-circle"  width="38px" height="38px" src="<%=locals.image%>" data-holder-rendered="true" alt="pro">
         </li>
           <%}%>
                       

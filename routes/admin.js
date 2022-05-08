@@ -8,10 +8,9 @@ const jwt = require('jsonwebtoken');
 var mongoUtil = require('./mongoDB');
 var dbo = mongoUtil.getDb();
 
-router.use((req, res, next) => {
 
-
-  if (!(req.cookies.token)) {
+router.use(async (req, res, next) => {
+  if (!(req.isAuthenticated())) {
     res.locals.auth = null;
     res.locals.role = null;
     res.locals.flash = null;
@@ -19,27 +18,52 @@ router.use((req, res, next) => {
     return next(createError(403, 'Only authorized user can view this page.'));
   }
   else {
-
-    let jwtSecretKey = process.env.JWT_SECRET_KEY;
-    const token = req.cookies.token;
-    verified = jwt.verify(token, jwtSecretKey, function (err, result) {
-      return result
-    })
-
-    res.locals.auth = verified.auth || null;
-    res.locals.role = verified.role || null;
-    res.locals.flash = req.query.flash || null;
-    res.locals.companyName = verified.companyName || null;
-
-    if (res.locals.role === "admin") {
+    if (req.user.account && req.user.account.role === "admin") {
+      res.locals.auth = req.user.id || null;
+      res.locals.role = req.user.account.role || null;
+      res.locals.flash = req.query.flash || null;
+      res.locals.companyName = req.user.account.companyName || null;
       next();
     }
     else {
       return next(createError(403, 'Only authorized user can view this page.'));
     }
   }
-
 })
+
+
+// router.use((req, res, next) => {
+
+
+//   if (!(req.cookies.token)) {
+//     res.locals.auth = null;
+//     res.locals.role = null;
+//     res.locals.flash = null;
+//     res.locals.companyName = null;
+//     return next(createError(403, 'Only authorized user can view this page.'));
+//   }
+//   else {
+
+//     let jwtSecretKey = process.env.JWT_SECRET_KEY;
+//     const token = req.cookies.token;
+//     verified = jwt.verify(token, jwtSecretKey, function (err, result) {
+//       return result
+//     })
+
+//     res.locals.auth = verified.auth || null;
+//     res.locals.role = verified.role || null;
+//     res.locals.flash = req.query.flash || null;
+//     res.locals.companyName = verified.companyName || null;
+
+//     if (res.locals.role === "admin") {
+//       next();
+//     }
+//     else {
+//       return next(createError(403, 'Only authorized user can view this page.'));
+//     }
+//   }
+
+// })
 
 router.get('/', async function (req, res) {
 
