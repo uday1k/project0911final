@@ -43,7 +43,7 @@ router.post('/registerdata', async function (req, res) {
 
   }
   else {
-    res.redirect('/?flash=Company Successfully Registered');
+    res.redirect('/');
   }
 
 

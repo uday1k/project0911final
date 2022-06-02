@@ -52,11 +52,48 @@
 
                                 </div>
 
-                                <div class="form-group" style="display: none;" id="div_id_of_company">
+                                <div class="form-group div_class_of_company" style="display: none;" id="div_id_of_company">
                                     <label for="id_companyName">Company Name</label>
                                     <input type="text" name="company_name" class="form-control" id="id_companyName"
                                         placeholder="Enter company name">
                                 </div>
+
+
+                                <div class="form-group div_class_of_company" style="display: none;" id="div_id_of_company">
+                                    <label for="id_company_sector">Company Sector</label>
+                                    <input type="text" name="company_type" class="form-control" id="id_company_sector"
+                                        placeholder="Enter company Sector">
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="id_phone_no">Phone Number</label>
+                                    <input type="text" name="phone_no" class="form-control" id="id_phone_no" placeholder="Enter phone number">
+                                  </div>
+
+                                  <div class="form-row">
+                                    <div class="col-md-6 mb-3">
+                                      <label for="id_city">City</label>
+                                      <input type="text" name="city" class="form-control" id="id_city" placeholder="City">
+                                      <div class="invalid-tooltip">
+                                        Please provide a valid city.
+                                      </div>
+                                    </div>
+                                    <div class="col-md-3 mb-3">
+                                      <label for="id_state">State</label>
+                                      <input type="text" name="state" class="form-control" id="id_state" placeholder="State">
+                                      <div class="invalid-tooltip">
+                                        Please provide a valid state.
+                                      </div>
+                                    </div>
+                                    <div class="col-md-3 mb-3">
+                                      <label for="id_zip">Zip</label>
+                                      <input type="text" name="zip" class="form-control" id="id_zip" placeholder="Zip">
+                                      <div class="invalid-tooltip">
+                                        Please provide a valid zip.
+                                      </div>
+                                    </div>
+
+
 
 
                                 <div class="form-group mb-0">
@@ -96,11 +133,11 @@
 
 $("[name='typeOfAccount']").change(function () {
         if ($('#company_radio_id').is(':checked')) {
-            $('#div_id_of_company').show();
+            $('.div_class_of_company').show();
         }
         else{
-            $('#div_id_of_company').hide();
-            $('#id_companyName').val('');
+            $('.div_class_of_company').hide();
+            $('.div_class_of_company').find(':input').val('');
         }
     });
             $(function () {
@@ -111,8 +148,16 @@ $("[name='typeOfAccount']").change(function () {
                         company_name:{
                             required:true,
                         },
-                        terms: {
-                            required: true
+                        city:{
+                            required:true,
+                        },
+                        state:{
+                            required:true,
+                        },
+                        zip: {
+                            required: true,
+                           minlength:2,
+                           number:true,
                         },
                     },
                     messages: {

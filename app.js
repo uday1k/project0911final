@@ -14,7 +14,7 @@ var app = express();
 
 app.set('trust proxy', 1);
 app.use(cookieSession({
-  name: 'session',
+  name: 'cookie',
   keys: ['anykey1', 'anykey2'],
   maxAge: 30 * 24 * 60 * 60 * 1000,
 }));
