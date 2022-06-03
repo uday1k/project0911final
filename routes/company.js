@@ -109,103 +109,103 @@ router.get('/myjobs', checkCompanyAuth, async function (req, res) {
 //   res.render('registerCompany', registerCheckCompany);
 // })
 
-// router.post('/register/:type?/:id?', async function (req, res) {
-//   let id = req.params.id;
-//   let type = req.params.type;
-//   if (!(id && type)) {
-//     let insertCompanyDetails = {};
-//     insertCompanyDetails.companyName = req.body.comp_company_name;
-//     insertCompanyDetails.companyEmail = req.body.comp_email;
-//     insertCompanyDetails.status = "pending";
+router.post('/register/:type?/:id?', async function (req, res) {
+  let id = req.params.id;
+  let type = req.params.type;
+  if (!(id && type)) {
+    let insertCompanyDetails = {};
+    insertCompanyDetails.companyName = req.body.comp_company_name;
+    insertCompanyDetails.companyEmail = req.body.comp_email;
+    insertCompanyDetails.status = "pending";
 
-//     const userData = dbo.collection("Users").findOne({ userEmail: req.body.comp_email });
-//     const companyData = dbo.collection("Companies").findOne({ companyEmail: req.body.comp_email });
-//     const companyDataNameCheck = dbo.collection("Companies").findOne({ companyName: req.body.comp_company_name });
-
-
-
-
-//     let result = await Promise.all([userData, companyData]);
-//     let companyDataNameCheckResult = await companyDataNameCheck;
-//     if (companyDataNameCheckResult != null) {
-//       let registerCheckCompany = {}
-//       registerCheckCompany.checkFails = "Company Already Registered";
-//       res.render('registerCompany', registerCheckCompany);
-//     }
-//     else if (result[0] === null && result[1] === null) {
-//       await bcrypt.hash(req.body.comp_password, saltRounds).then(function (hash) {
-//         insertCompanyDetails.companyPassword = hash;
-//       });
-//       insertCompanyDetails.registeredOnDateTime = new Date().toLocaleString();
-//       insertCompanyDetails.companyId = new Date().getTime() + "" + Math.floor(100000 + Math.random() * 900000);
-//       await dbo.collection("Companies").insertOne(insertCompanyDetails, function (err, result) {
-//         if (err) throw err;
-//         res.redirect('/?flash=Company Successfully Registered')
-//       })
-//     }
-//     else {
-//       let registerCheckCompany = {}
-//       registerCheckCompany.checkFails = "Email ID already Exists";
-//       res.render('registerCompany', registerCheckCompany);
-//     }
-
-//   }
-//   else if (type && !(id)) {
-//     res.send('error no id but there is type');
-
-//   }
-//   else {
-
-//     const companyDetails = await dbo.collection('Companies').findOne({ "_id": ObjectId(id) })
-//     await dbo.collection('Companies').updateOne({ "_id": ObjectId(id) }, { $set: { status: type } }, function (err, resultOfUpdt) {
-//       let mailOptions = {
-//         from: 'kommineniuday449@gmail.com',
-//         to: companyDetails.companyEmail,
-//         subject: 'Company Status',
-//         text: companyDetails.companyName + " status is updated to " + type,
-//       };
-
-//       transporter.sendMail(mailOptions, function (error, info) {
-//         if (error) {
-//           console.log(error);
-//         } else {
-//           console.log('Email sent: ' + info.response);
-//         }
-//       });
-
-//       res.redirect('/admin/companylist')
-//     })
-
-
-//   }
-
-// })
-
-// router.post('/checkcompanydetails', async function (req, res) {
-
-//   const register_company_name_value = req.body[0].value;
-//   const register_email_value = req.body[1].value;
-
-//   const userData = dbo.collection("Users").findOne({ userEmail: register_email_value });
-//   const companyData = dbo.collection("Companies").findOne({ companyEmail: register_email_value });
-//   const companyDataNameCheck = dbo.collection("Companies").findOne({ companyName: register_company_name_value });
-
-
-//   let result = await Promise.all([userData, companyData]);
-//   let companyDataNameCheckResult = await companyDataNameCheck;
-//   if (companyDataNameCheckResult != null) {
-//     res.send("companyFound");
-//   }
-//   else if (result[0] === null && result[1] === null) {
-//     res.send("noCompanyFound");
-//   }
-//   else {
-//     res.send("emailFound");
-//   }
+    const userData = dbo.collection("Users").findOne({ userEmail: req.body.comp_email });
+    const companyData = dbo.collection("Companies").findOne({ companyEmail: req.body.comp_email });
+    const companyDataNameCheck = dbo.collection("Companies").findOne({ companyName: req.body.comp_company_name });
 
 
 
-// })
+
+    let result = await Promise.all([userData, companyData]);
+    let companyDataNameCheckResult = await companyDataNameCheck;
+    if (companyDataNameCheckResult != null) {
+      let registerCheckCompany = {}
+      registerCheckCompany.checkFails = "Company Already Registered";
+      res.render('registerCompany', registerCheckCompany);
+    }
+    else if (result[0] === null && result[1] === null) {
+      await bcrypt.hash(req.body.comp_password, saltRounds).then(function (hash) {
+        insertCompanyDetails.companyPassword = hash;
+      });
+      insertCompanyDetails.registeredOnDateTime = new Date().toLocaleString();
+      insertCompanyDetails.companyId = new Date().getTime() + "" + Math.floor(100000 + Math.random() * 900000);
+      await dbo.collection("Companies").insertOne(insertCompanyDetails, function (err, result) {
+        if (err) throw err;
+        res.redirect('/?flash=Company Successfully Registered')
+      })
+    }
+    else {
+      let registerCheckCompany = {}
+      registerCheckCompany.checkFails = "Email ID already Exists";
+      res.render('registerCompany', registerCheckCompany);
+    }
+
+  }
+  else if (type && !(id)) {
+    res.send('error no id but there is type');
+
+  }
+  else {
+
+    const companyDetails = await dbo.collection('Companies').findOne({ "_id": ObjectId(id) })
+    await dbo.collection('Companies').updateOne({ "_id": ObjectId(id) }, { $set: { status: type } }, function (err, resultOfUpdt) {
+      let mailOptions = {
+        from: 'kommineniuday449@gmail.com',
+        to: companyDetails.companyEmail,
+        subject: 'Company Status',
+        text: companyDetails.companyName + " status is updated to " + type,
+      };
+
+      transporter.sendMail(mailOptions, function (error, info) {
+        if (error) {
+          console.log(error);
+        } else {
+          console.log('Email sent: ' + info.response);
+        }
+      });
+
+      res.redirect('/admin/companylist')
+    })
+
+
+  }
+
+})
+
+router.post('/checkcompanydetails', async function (req, res) {
+
+  const register_company_name_value = req.body[0].value;
+  const register_email_value = req.body[1].value;
+
+  const userData = dbo.collection("Users").findOne({ userEmail: register_email_value });
+  const companyData = dbo.collection("Companies").findOne({ companyEmail: register_email_value });
+  const companyDataNameCheck = dbo.collection("Companies").findOne({ companyName: register_company_name_value });
+
+
+  let result = await Promise.all([userData, companyData]);
+  let companyDataNameCheckResult = await companyDataNameCheck;
+  if (companyDataNameCheckResult != null) {
+    res.send("companyFound");
+  }
+  else if (result[0] === null && result[1] === null) {
+    res.send("noCompanyFound");
+  }
+  else {
+    res.send("emailFound");
+  }
+
+
+
+})
 
 
 
