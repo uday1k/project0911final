@@ -24,7 +24,7 @@ const checkCompanyAuth = (req, res, next) => {
     res.locals.role = null;
     res.locals.flash = null;
     res.locals.companyName = null;
-    return next(createError(403, 'Only authorized user can view this page.'));
+    return next(createError(403, 'Please sign in to view this page.'));
   }
   else {
 
