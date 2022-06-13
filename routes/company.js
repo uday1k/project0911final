@@ -2,11 +2,6 @@ const express = require('express');
 const router = express.Router();
 var createError = require('http-errors');
 
-
-
-const jwt = require('jsonwebtoken');
-
-
 const bcrypt = require('bcrypt');
 const saltRounds = 10;
 const { ObjectId } = require('mongodb');
@@ -58,38 +53,6 @@ const checkCompanyAuth = (req, res, next) => {
 
 
 
-// const checkCompanyAuth = (req, res, next) => {
-
-
-//   if (!(req.cookies.token)) {
-//     res.locals.auth = null;
-//     res.locals.role = null;
-//     res.locals.flash = null;
-//     res.locals.companyName = null;
-//     return next(createError(403, 'Only authorized user can view this page.'));
-//   }
-//   else {
-
-//     let jwtSecretKey = process.env.JWT_SECRET_KEY;
-//     const token = req.cookies.token;
-//     verified = jwt.verify(token, jwtSecretKey, function (err, result) {
-//       return result
-//     })
-
-//     res.locals.auth = verified.auth || null;
-//     res.locals.role = verified.role || null;
-//     res.locals.flash = req.query.flash || null;
-//     res.locals.companyName = verified.companyName || null;
-
-//     if (res.locals.role === "company") {
-//       next();
-//     }
-//     else {
-//       return next(createError(403, 'Only authorized user can view this page.'));
-//     }
-//   }
-
-// }
 
 
 router.get('/myjobs', checkCompanyAuth, async function (req, res) {
@@ -103,11 +66,7 @@ router.get('/myjobs', checkCompanyAuth, async function (req, res) {
 
 })
 
-// router.get('/register', function (req, res) {
-//   let registerCheckCompany = {}
-//   registerCheckCompany.checkFails = "";
-//   res.render('registerCompany', registerCheckCompany);
-// })
+
 
 router.post('/register/:type?/:id?', async function (req, res) {
   let id = req.params.id;

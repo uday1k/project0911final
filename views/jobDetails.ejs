@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <%- include('partials/head.ejs', {title:"Job"}) %>
+        <style>
+
+
+        </style>
+</head>
+
+<body>
+
+
+
+
+
+
+
+    <div class="jumbotron">
+        <h2> <%=data.deptType%>-<%=data.roleType%></h2>
+        <p class="lead">
+            qualification required:<b><%=data.qualificationRequired%></b><br>
+                    <%if(!(data.skillsRequired)){%>
+                        <b>No Skills required</b><br>
+                            <%} else if(!(Array.isArray(data.skillsRequired))){%>
+                                <b><%=data.skillsRequired %></b> is the only skill required.<br>
+                                <%}else{
+                                    for(let j=0;j<data.skillsRequired.length;j++){%>
+                                            <b><%=data.skillsRequired[j]%></b>,
+                                        <%}%>
+                                        and the like are  skills required.<br>        
+                                    <%}%>
+                   
+        </p>
+        <hr class="my-4">
+        <p class="lead">
+            <b>Job Description</b><br>
+            <%=data.jobDescription%>.
+
+            Last Date and Time to Apply: <%=data.lastDateTimeToApply%>(IST)
+        </p>
+        <p class="lead">
+            <%if(locals.auth){%>
+          <a class="btn btn-primary btn-lg" href="<%=data.jobURL%>" role="button">Apply</a>
+          <%}else{%>
+
+            <a class="btn btn-primary btn-lg" id="myInput" role="button" data-toggle="modal" data-target="#exampleModal">Apply</a>
+            <%}%>
+
+        </p>
+      
+    
+    
+    </div>
+
+
+ 
+  
+  <!-- Modal -->
+  <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">Pleasin Login To Apply</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          <a type="button" href="/login" class="btn btn-primary">Login</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+
+
+
+
+    <%- include('partials/footscript.ejs') %>
+
+
+
+
+<script>
+    $('#myModal').on('shown.bs.modal', function () {
+  $('#myInput').trigger('focus')
+})
+</script>
+
+
+
+</body>
+
+</html>

@@ -3,164 +3,207 @@
 
 <head>
     <%- include('partials/head.ejs', {title:"Index"}) %>
+    <style>
+        .fa,.fas{
+            padding: 5px;
+        }
+        .card-header{
+            text-align: center;
+            background-color: #FEFBE7;
+        }
+        
+        .card-footer{
+            text-align: center;
+            background-color: #DAEAF1;
+        }
+        .card-title{
+            text-align: center;
+        }
+        .rounded-pill{
+            padding: 1px;
+            margin: 2px;
+        }
+
+    </style>
 </head>
+
 <body>
 
 
-    
+
     <%- include('partials/navbar.ejs',{pageName:"home"}) %>
-    
-    <%- include('partials/dataAlerts.ejs') %>
-    
-    
-    <div class="m-3">
-        <form  action="/" method="get">
-            <div class="row">
-                <div class="col-2">
-                    <input class="form-control mr-sm-2" name="search_value" id="search_id" type="search" placeholder="Search" value="<%=search_id_value%>" oninput="showHint(this.value)">    
-                    <ul class="list-unstyled" id="options_id">
-        
+
+        <%- include('partials/dataAlerts.ejs') %>
+
+
+            <div class="m-3">
+                <form action="/" method="get">
+                    <div class="row">
+                        <div class="col-2">
+                            <input class="form-control mr-sm-2" name="search_value" id="search_id" type="search"
+                                placeholder="Search" value="<%=search_id_value%>" oninput="showHint(this.value)">
+                            <ul class="list-unstyled" id="options_id">
+
+                            </ul>
+                        </div>
+                        <div class="col-2">
+                            <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+ <!-- p-3 my-3 border -->
+ 
+            <div class="container">
+
+
+                <%if(!(rorj.length)){%>
+                    <h1 class="d-flex justify-content-center">No Results Found</h1>
+                    <%}%>
+
+                <div class="container">
+                    <div class="row">
+
+                        <% for(let i=0;i<rorj.length;i++){%>
+                                    <div class="col-md-3 card mx-3 ">
+                                        <div class="card-header" >
+                                            <h4 class="card-title" style="text-align: center;"><%=rorj[i].companyName%></h4>
+                                        </div>
+                                        <div class="card-body" >
+            
+                                              <strong title="ctc offering"><i class="fas fa-rupee-sign"></i>  <%=rorj[i].ctcOffered%> LPA <br></strong>
+            
+                                                <strong title="department"><i class="fa fa-briefcase"></i> <%=rorj[i].deptType%> <br></strong>
+            
+                                                <strong title="Role"><i class="fas fa-network-wired"></i> <%=rorj[i].roleType%><br></strong>
+                                                <strong title="Last Date on"><i class="fa fa-calendar"></i> <%=rorj[i].lastDateTimeToApply%></strong><br>
+                                                <strong title="Qualification required"><i class="fas fa-user-graduate"></i> <%=rorj[i].qualificationRequired%></strong><br>
+                                                &nbsp;<strong>Skills:</strong>
+                                                <%if(!(rorj[i].skillsRequired)){%>
+                                                    <b>No Skills required</b><br>
+                                                    <%} else if(!(Array.isArray(rorj[i].skillsRequired))){%>
+                                                        
+                                                            <%=rorj[i].skillsRequired %>
+                                                         
+                                                        <%}else{ for(let j=0;j<rorj[i].skillsRequired.length;j++){%>
+                                                            
+                                                                <%=rorj[i].skillsRequired[j]%> &nbsp;
+                                                            
+                                                            <%}%>
+                                                                <%}%>
+                                                                
+                                                
+                                        </div>
+                                        <a href="/view/<%=rorj[i]._id%>" target="_blank">
+                                            <div class="card-footer"> More Info <i class="fas fa-arrow-circle-right"></i> </div>
+                                        </a>
+            
+                                    </div>
+                            <%}%>
+
+
+
+
+
+                    </div>
+                </div>
+
+               
+
+                
+                        
+
+            <div class="d-flex justify-content-center">
+                <nav>
+                    <ul class="pagination">
+                        <%if(previous){%>
+                            <li class="page-item">
+                                <a class="page-link" href="<%=prevURL%>">Previous</a>
+                            </li>
+                            <%}else{%>
+                                <li class="page-item disabled">
+                                    <span class="page-link">Previous</span>
+                                </li>
+                                <%}%>
+
+
+                                    <li class="page-item active">
+                                        <span class="page-link">
+                                            <%=pageNo%>
+                                        </span>
+                                    </li>
+
+                                    <%if(next){%>
+                                        <li class="page-item">
+                                            <a class="page-link" href="<%=nextURL%>">Next</a>
+
+                                        </li>
+                                        <%}else{%>
+                                            <li class="page-item disabled">
+                                                <span class="page-link">Next</span>
+                                            </li>
+                                            <%}%>
+
                     </ul>
-                </div>
-                <div class="col-2">
-                    <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
-                </div>
+                </nav>
             </div>
-          </form>
-    </div>
-    
-        
-
-    <div class="container p-3 my-3 border">
-
-        <%if(!(rorj.length)){%>
-            <h1 class="d-flex justify-content-center">No Results Found</h1>
-            <%}%>
-        <% for(let i=0;i<rorj.length;i++){%>
-        <div class="card text-center">
-            <div class="card-header font-weight-bold">
-                <%=rorj[i].deptType%>-<%=rorj[i].roleType%>
-            </div>
-            <div class="card-body">
-                <h3 class="card-title"><%=rorj[i].companyName%></h3>
-                <p class="card-text">
-                    <b><%=rorj[i].experience%> year(s)</b> experiance required with minimum <b><%=rorj[i].qualificationRequired%></b> qualification.
-                    <br>
-                    CTC offered:<b><%=rorj[i].ctcOffered%> LPA</b><br>
-                    <%if(!(rorj[i].skillsRequired)){%>
-                        <b>No Skills required</b><br>
-                            <%} else if(!(Array.isArray(rorj[i].skillsRequired))){%>
-                                <b><%=rorj[i].skillsRequired %></b> is the only skill required.<br>
-                                <%}else{
-                                    for(let j=0;j<rorj[i].skillsRequired.length;j++){%>
-                                            <b><%=rorj[i].skillsRequired[j]%></b>,
-                                        <%}%>
-                                        and the like are  skills required.<br>        
-                                    <%}%>
-                    <%=rorj[i].jobDescription%>
-                </p>
-                <%if(auth){%>
-                <a href="<%=rorj[i].jobURL%>" target="_blank" class="btn btn-primary">Apply</a>
-                <%}else{%>
-                    <a class="btn btn-primary disabled">Login to Apply</a>
-                    <%}%>
-            </div>
-            <div class="card-footer text-muted font-weight-normal">
-               Last Date and Time to Apply: <%=rorj[i].lastDateTimeToApply%>(IST)
-            </div>
-        </div>
-        <%}%>
-    </div>
-
-    <div class="d-flex justify-content-center">
-        <nav>
-            <ul class="pagination">
-                <%if(previous){%>
-                    <li class="page-item">
-                        <a class="page-link" href="<%=prevURL%>">Previous</a>
-                      </li>
-                    <%}else{%>
-                        <li class="page-item disabled">
-                            <span class="page-link">Previous</span>
-                          </li>
-                        <%}%>
-              
-              
-              <li class="page-item active">
-                <span class="page-link">
-                  <%=pageNo%>
-                </span>
-              </li>
-
-              <%if(next){%>
-                <li class="page-item">
-                    <a class="page-link" href="<%=nextURL%>">Next</a>
-                    
-                  </li>
-                <%}else{%>
-                    <li class="page-item disabled">
-                        <span class="page-link">Next</span>
-                      </li>
-                    <%}%>
-              
-            </ul>
-          </nav>
-    </div>
-    <%- include('partials/footscript.ejs') %>
+            <%- include('partials/footscript.ejs') %>
+                
+                        
 
 
+                <script>
 
-    <script>
+                    function addtosearchfun(val) {
+                        let currentValue = $("#search_id").val()
+                        let lastIndex = currentValue.lastIndexOf(",")
+                        if (lastIndex === -1) {
+                            $("#search_id").val(val + ",");
+                        }
+                        else {
+                            let chVal = currentValue.slice(0, lastIndex + 1)
+                            $("#search_id").val(chVal + val + ",");
+                        }
+                        showHint("");
 
-function addtosearchfun(val){
-            let currentValue=$("#search_id").val()
-            let lastIndex=currentValue.lastIndexOf(",")
-            if(lastIndex===-1){
-                $("#search_id").val(val+",");
-            }
-            else{
-                let chVal=currentValue.slice(0,lastIndex+1)
-                $("#search_id").val(chVal+val+",");
-            }
-            showHint("");
-    
-    }
+                    }
 
-        function showHint(str) {
-            let lastIndexofStr=str.lastIndexOf(",")
-                    let searchVal=str.slice(lastIndexofStr+1,)
+                    function showHint(str) {
+                        let lastIndexofStr = str.lastIndexOf(",")
+                        let searchVal = str.slice(lastIndexofStr + 1,)
 
-            if (str.length == 0 || searchVal.length==0) {
-                $("#options_id").html("");
-                return;
-            } 
-            else if(str[-1]==','){
-                $("#options_id").html("");
-                return;
-            }
-            else {
-                $.ajax({
-                        url: "/gethints", 
-                        type: "POST",
-                        contentType: "application/json",             
-                        data: JSON.stringify([searchVal]),
-                        cache: false,             
-                        processData: false,      
-                        success: function(msg) {
-                            
-                                var availableSkills=""
-                                for(let i=0;i<msg.length;i++){
-                                    availableSkills+=`<li><input class="form-control mr-sm-2" value=${msg[i]} onclick=addtosearchfun(this.value) readonly></li>`
+                        if (str.length == 0 || searchVal.length == 0) {
+                            $("#options_id").html("");
+                            return;
+                        }
+                        else if (str[-1] == ',') {
+                            $("#options_id").html("");
+                            return;
+                        }
+                        else {
+                            $.ajax({
+                                url: "/gethints",
+                                type: "POST",
+                                contentType: "application/json",
+                                data: JSON.stringify([searchVal]),
+                                cache: false,
+                                processData: false,
+                                success: function (msg) {
+
+                                    var availableSkills = ""
+                                    for (let i = 0; i < msg.length; i++) {
+                                        availableSkills += `<li><input class="form-control mr-sm-2" value=${msg[i]} onclick=addtosearchfun(this.value) readonly></li>`
+                                    }
+                                    $("#options_id").html(availableSkills);
+
                                 }
-                                $("#options_id").html(availableSkills);
-                            
-                            }
-                    });
-            }
-        }
-        </script>
+                            });
+                        }
+                    }
+                </script>
 
 
 
 </body>
+
 </html>

@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <%- include('partials/head.ejs', {title:"Register"}) %>
+    <style>
+        .separator {
+  display: flex;
+  align-items: center;
+  text-align: center;
+}
+
+.separator::before,
+.separator::after {
+  content: '';
+  flex: 1;
+  border-bottom: 1px solid #000;
+}
+
+.separator:not(:empty)::before {
+  margin-right: .25em;
+}
+
+.separator:not(:empty)::after {
+  margin-left: .25em;
+}
+    </style>
+</head>
+
+<body>
+
+    <!-- Main content -->
+    <section class="content">
+        <div class="container-fluid">
+            <div class="row">
+                <!-- left column -->
+                <div class="col-md-12">
+                    <!-- jquery validation -->
+                    <div class="card card-primary">
+                        <div class="card-header">
+                            <h3 class="card-title">Registration Form</h3>
+                        </div>
+                        <!-- /.card-header -->
+                        <!-- form start -->
+                        <form id="quickForm" action="/registerdata" method="post">
+                            <div class="card-body">
+
+                                <div id="email_exist_id" style="display: none;">
+                                    <div class="d-flex justify-content-center mt-2">
+                                      <div class="w-25 d-flex justify-content-center alert alert-danger">
+                                          <strong>Email Already Exist!</strong>
+                                      </div>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="id_user_email">Email</label>
+                                    <input type="email" name="user_email" class="form-control" id="id_user_email" placeholder="Enter Email">
+                                </div>
+                                <div class="form-group">
+                                    <label for="id_username">User Name</label>
+                                    <input type="text" name="user_username" class="form-control" id="id_usernamename" placeholder="Enter User Name">
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="id_user_password">Password</label>
+                                    <input type="password" name="user_password" class="form-control" id="id_user_password" placeholder="Enter Password">
+                                </div>
+                                <div class="form-group">
+                                    <label for="id_retype_userpass">Confirm Password</label>
+                                    <input type="password" name="user_retype_pass" class="form-control" id="id_retype_userpass" placeholder="Retype Password">
+                                </div>
+                                <div class="form-group">
+                                   <b>Type of User? &nbsp;&nbsp;</b> 
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="radio" name="typeOfAccount"
+                                            id="user_radio_id" value="user" checked>
+                                        <label class="form-check-label" for="user_radio_id">
+                                            user
+                                        </label>
+                                    </div>
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="radio" name="typeOfAccount"
+                                            id="company_radio_id" value="company">
+                                        <label class="form-check-label" for="company_radio_id">
+                                            company
+                                        </label>
+                                    </div>
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="radio" name="typeOfAccount"
+                                            id="admin_radio_id" value="admin">
+                                        <label class="form-check-label" for="admin_radio_id">
+                                            admin
+                                        </label>
+                                    </div>
+
+
+
+                                </div>
+
+                                <div class="form-group div_class_of_company" style="display: none;" id="div_id_of_company">
+                                    <label for="id_companyName">Company Name</label>
+                                    <input type="text" name="company_name" class="form-control" id="id_companyName"
+                                        placeholder="Enter company name">
+                                </div>
+
+
+                                <div class="form-group div_class_of_company" style="display: none;" id="div_id_of_company">
+                                    <label for="id_company_sector">Company Sector</label>
+                                    <input type="text" name="company_type" class="form-control" id="id_company_sector"
+                                        placeholder="Enter company Sector">
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="id_phone_no">Phone Number</label>
+                                    <input type="text" name="phone_no" class="form-control" id="id_phone_no" placeholder="Enter phone number">
+                                  </div>
+
+                                  <div class="form-row">
+                                    <div class="col-md-6 mb-3">
+                                      <label for="id_city">City</label>
+                                      <input type="text" name="city" class="form-control" id="id_city" placeholder="City">
+                                      <div class="invalid-tooltip">
+                                        Please provide a valid city.
+                                      </div>
+                                    </div>
+                                    <div class="col-md-3 mb-3">
+                                      <label for="id_state">State</label>
+                                      <input type="text" name="state" class="form-control" id="id_state" placeholder="State">
+                                      <div class="invalid-tooltip">
+                                        Please provide a valid state.
+                                      </div>
+                                    </div>
+                                    <div class="col-md-3 mb-3">
+                                      <label for="id_zip">Zip</label>
+                                      <input type="text" name="zip" class="form-control" id="id_zip" placeholder="Zip">
+                                      <div class="invalid-tooltip">
+                                        Please provide a valid zip.
+                                      </div>
+                                    </div>
+
+
+
+
+                                <div class="form-group mb-0">
+                                    <div class="custom-control custom-checkbox">
+                                        <input type="checkbox" name="terms" class="custom-control-input"
+                                            id="exampleCheck1">
+                                        <label class="custom-control-label" for="exampleCheck1">I agree to the <a
+                                                href="#">terms of service</a>.</label>
+                                    </div>
+                                </div>
+
+                            </div>
+                            <!-- /.card-body -->
+                            <div class="card-footer">
+                                <button type="submit" class="btn btn-primary">Submit</button>
+                            </div>
+                        </form>
+                    </div>
+                    <!-- /.card -->
+                </div>
+                <!--/.col (left) -->
+
+                <!--/.col (right) -->
+            </div>
+            <!-- /.row -->
+        </div><!-- /.container-fluid -->
+    </section>
+
+    
+      
+    <div class="separator">OR Sign with Google</div>
+   <br>
+<div class="container-fluid  text-center">
+    <a class="btn btn-outline-light text-dark col-md-4 mr-2" href="/logingoogle" role="button" style="text-transform:none"><img width="20px" style="margin-bottom:3px; margin-right:5px" alt="Google sign-in" src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/53/Google_%22G%22_Logo.svg/512px-Google_%22G%22_Logo.svg.png" />Sign-in with Google</a>
+
+</div>
+
+<br>
+    <%- include('partials/footscript.ejs') %>
+
+
+        <!-- Page specific script -->
+        <script>
+
+$("[name='typeOfAccount']").change(function () {
+        if ($('#company_radio_id').is(':checked')) {
+            $('.div_class_of_company').show();
+        }
+        else{
+            $('.div_class_of_company').hide();
+            $('.div_class_of_company').find(':input').val('');
+        }
+    });
+            $(function () {
+
+
+
+                $.validator.setDefaults({
+                            submitHandler: function (form) {
+                            let formData = $("#quickForm").serializeArray();
+                            $.ajax({
+                            url: "/checkEmail", 
+                            type: "POST",
+                            contentType: "application/json",             
+                            data: JSON.stringify(formData),
+                            cache: false,             
+                            processData: false,      
+                            success: function(data) {
+                                if(data==="emailFound"){
+                                $("#email_exist_id").fadeTo(2000, 500).slideUp(500, function(){
+                                    $("#email_exist_id").slideUp(500);
+                                });
+                                }
+                                else{
+                                    $("#email_exist_id").hide();
+                                    form.submit();
+                            
+                                }
+                            }
+                            });
+         
+    
+                    }   
+                });
+
+
+
+
+
+                $('#quickForm').validate({
+                    rules: {
+                        user_username:{
+                            required:true,
+                        },
+                        user_email:{
+                            required:true,
+                            email:true,
+                        },
+                        user_password:{
+                            required:true,
+                            minlength:8,
+                        },
+                        user_retype_pass:{
+                            required:true,
+                            equalTo:"#id_user_password",
+                        },
+                        phone_no:{
+                            required:true,
+                        },
+                        company_name:{
+                            required:true,
+                        },
+                        city:{
+                            required:true,
+                        },
+                        state:{
+                            required:true,
+                        },
+                        zip: {
+                            required: true,
+                           minlength:2,
+                           number:true,
+                        },
+                    },
+                    messages: {
+                        user_username:{
+                            required:"Username required",
+                        },
+                        user_email:{
+                            required:"Email required",
+                            email:"Email format wrong",
+                        },
+                        user_password:{
+                            required:"password required",
+                            minlength:"password must be more than 8 characters",
+                        },
+                        user_retype_pass:{
+                            required:"retype password ",
+                            equalTo:"password mismatched",
+                        },
+                        company_name: {
+                            required: "Please fill company name",
+                        },
+                        terms: "Please accept our terms"
+                    },
+                    errorElement: 'span',
+                    errorPlacement: function (error, element) {
+                        error.addClass('invalid-feedback');
+                        element.closest('.form-group').append(error);
+                    },
+                    highlight: function (element, errorClass, validClass) {
+                        $(element).addClass('is-invalid');
+                    },
+                    unhighlight: function (element, errorClass, validClass) {
+                        $(element).removeClass('is-invalid');
+                    }
+                });
+            });
+
+
+
+        </script>
+
+
+</body>
+
+</html>

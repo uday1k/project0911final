@@ -8,7 +8,7 @@ var mongoUtil = require( './routes/mongoDB' );
 
 const passport = require('passport');
 const cookieSession = require('cookie-session');
-require('./routes/passport');
+
 var app = express();
 
 app.set('trust proxy', 1);
@@ -39,6 +39,8 @@ app.use(express.static(path.join(__dirname, 'views')));
 
 mongoUtil.connectToServer( function( err) {
       if (err) console.log(err);
+      require('./routes/passport');
+
 
       app.use('/',require('./routes/index'));
       app.use('/admin',require('./routes/admin'));
@@ -46,6 +48,7 @@ mongoUtil.connectToServer( function( err) {
       app.use('/company',require('./routes/company'));
       app.use('/user',require('./routes/users'));
             
+      
       // catch 404 and forward to error handler
       app.use(function (req, res, next) {
         next(createError(404));
