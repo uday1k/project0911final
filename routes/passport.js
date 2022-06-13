@@ -43,7 +43,7 @@ passport.use(new LocalStrategy({
         userData.id = true;
         userData.image = user.image || null;
         userData.emailid = { value: user.emailid },
-            userData.account = { role: user.role, displayName: user.userName, compnayName: user.compnayName }
+            userData.account = { role: user.role, displayName: user.userName, companyName: user.companyName }
 
         return cb(null, userData, {
             message: 'Logged In Successfully'
