@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const bcrypt = require('bcrypt');
-const jwt = require('jsonwebtoken');
+const { ObjectId } = require('mongodb');
 
 var mongoUtil = require('./mongoDB');
 var dbo = mongoUtil.getDb();
@@ -10,7 +10,14 @@ const passport = require('passport');
 
 
 
-router.get('/login', passport.authenticate('google', { scope: ['email', 'profile'] }));
+
+
+
+
+
+
+
+router.get('/logingoogle', passport.authenticate('google', { scope: ['email', 'profile'] }));
 
 router.get('/callback', passport.authenticate('google', { scope: ['email', 'profile'], failureRedirect: '/error' }), async (req, res) => {
 
@@ -19,20 +26,64 @@ router.get('/callback', passport.authenticate('google', { scope: ['email', 'prof
   return res.redirect('/?flash=succesfully loggedIn');
 });
 
+router.post('/login', passport.authenticate('local', { failureRedirect: '/login' }), function (req, res) {
+  res.redirect('/');
+});
+
+
+router.get('/logout', function (req, res) {
+  req.logOut();
+  req.session = null;
+  res.redirect("/");
+})
+router.post('/checkEmail', async function (req, res) {
+  const result = await dbo.collection("Credentials").findOne({ emailid: req.body[0].value });
+  if (result)
+    res.send("emailFound");
+  else
+    res.send("formSubmitted");
+})
+
+
+router.get('/register', function (req, res) {
+
+  res.render('registerLocal')
+
+})
 
 router.post('/registerdata', async function (req, res) {
   const data = {}
-  data.emailid = req.user.emailid.value;
   data.role = req.body.typeOfAccount;
   data.active = true;
-  data.userName = req.user.displayName;
   data.companyName = req.body.company_name;
+  if (req.isAuthenticated()) {
+    data.emailid = req.user.emailid.value;
+    data.userName = req.user.displayName;
+    req.user.account = data;
+
+  }
+  else {
+
+    hash = bcrypt.hash(req.body.user_password, 10);
+    data.password = await hash;
+    data.emailid = req.body.user_email;
+    data.userName = req.body.user_username;
+  }
+
+
   await dbo.collection("Credentials").insertOne(data)
-  req.user.account = data;
   if (req.body.company_name) {
     let insertCompanyDetails = {};
     insertCompanyDetails.companyName = req.body.company_name;
-    insertCompanyDetails.companyEmail = req.user.emailid.value;
+    if (req.isAuthenticated()) {
+      insertCompanyDetails.companyEmail = req.user.emailid.value;
+    }
+    else {
+      insertCompanyDetails.companyEmail = req.body.user_email;
+
+
+    }
+
     insertCompanyDetails.status = "pending";
     insertCompanyDetails.registeredOnDateTime = new Date().toLocaleString();
     insertCompanyDetails.companyId = new Date().getTime() + "" + Math.floor(100000 + Math.random() * 900000);
@@ -58,7 +109,7 @@ router.use((req, res, next) => {
   if (!(req.isAuthenticated())) {
     res.locals.auth = null;
     res.locals.role = null;
-    res.locals.flash = null;
+    res.locals.flash = req.query.flash || null;
     res.locals.companyName = null;
     next();
   }
@@ -68,7 +119,7 @@ router.use((req, res, next) => {
       res.locals.role = req.user.account.role || null;
       res.locals.flash = req.query.flash || null;
       res.locals.companyName = req.user.account.companyName || null;
-      res.locals.image=req.user.image;
+      res.locals.image = req.user.image || null;
       next();
     }
     else {
@@ -78,30 +129,6 @@ router.use((req, res, next) => {
 })
 
 
-// router.use((req, res, next) => {
-//   if (!(req.cookies.token)) {
-//     res.locals.auth=null;
-//     res.locals.role=null;
-//     res.locals.flash = null;
-//     res.locals.companyName=null;
-//     next();
-//   }
-//   else{
-
-//     let jwtSecretKey = process.env.JWT_SECRET_KEY;
-//     const token = req.cookies.token;
-
-//     verified = jwt.verify(token, jwtSecretKey, function (err, result) {
-//       return result
-//     })
-//     console.log(req.app.locals)
-//     res.locals.auth=verified.auth||null;
-//     res.locals.role=verified.role||null;
-//     res.locals.flash=req.query.flash||null;
-//     res.locals.companyName=verified.companyName||null;
-//     next();
-//   }
-// })
 
 
 router.get('/', paginatedMacthedResults(), function (req, res) {
@@ -133,100 +160,59 @@ router.get('/courses', function (req, res) {
 
 function paginatedMacthedResults() {
 
-  return (req, res, next) => {
+  return async (req, res, next) => {
 
-
+    model = []
     let skillsearch = req.query.search_value;
     if ((!(skillsearch)) || skillsearch === "undefined") {
-      dbo.collection("jobsDetails").find({}).toArray(function (err, model) {
-
-
-        const limit = 2;
-        let page;
-        if (req.query.page) {
-          page = parseInt(req.query.page);
-        }
-        else {
-          page = 1;
-        }
-
-        const startIndex = (page - 1) * limit;
-        const endIndex = page * limit;
-
-        const results = {};
-        if (endIndex < model.length) {
-          results.next = {
-            page: page + 1,
-            limit: limit
-          };
-        }
-
-        if (startIndex > 0) {
-          results.previous = {
-            page: page - 1,
-            limit: limit
-          };
-        }
-        results.pageNo = page;
-        results.results = model.slice(startIndex, endIndex);
-
-        res.paginatedResults = results;
-        next();
-      });
+      const aggCursor = dbo.collection("jobsDetails").aggregate();
+      for await (const doc of aggCursor) {
+        model.push(doc);
+      }
     }
     else {
       skillsearch = skillsearch.replaceAll(",", " ")
-      let model = [];
-      async function asRetriveSearch() {
-        const aggCursor = dbo.collection("jobsDetails").aggregate([{ $match: { $text: { $search: skillsearch } } }, { $sort: { score: { $meta: "textScore" } } }])
-        for await (const doc of aggCursor) {
-          model.push(doc);
-        }
-
-
-        const limit = 2;
-        let page;
-        if (req.query.page) {
-          page = parseInt(req.query.page);
-        }
-        else {
-          page = 1;
-        }
-
-        const startIndex = (page - 1) * limit;
-        const endIndex = page * limit;
-
-        const results = {};
-        if (endIndex < model.length) {
-          results.next = {
-            page: page + 1,
-            limit: limit
-          };
-        }
-
-        if (startIndex > 0) {
-          results.previous = {
-            page: page - 1,
-            limit: limit
-          };
-        }
-        results.pageNo = page;
-        results.results = model.slice(startIndex, endIndex);
-
-        res.paginatedResults = results;
-        next();
-
-
+      const aggCursor = dbo.collection("jobsDetails").aggregate([{ $match: { $text: { $search: skillsearch } } }, { $sort: { score: { $meta: "textScore" } } }])
+      for await (const doc of aggCursor) {
+        model.push(doc);
       }
-      asRetriveSearch();
-
     }
+    const limit = 6;
+    let page;
+    if (req.query.page) {
+      page = parseInt(req.query.page);
+    }
+    else {
+      page = 1;
+    }
+
+    const startIndex = (page - 1) * limit;
+    const endIndex = page * limit;
+
+    const results = {};
+    if (endIndex < model.length) {
+      results.next = {
+        page: page + 1,
+        limit: limit
+      };
+    }
+
+    if (startIndex > 0) {
+      results.previous = {
+        page: page - 1,
+        limit: limit
+      };
+    }
+    results.pageNo = page;
+    results.results = model.slice(startIndex, endIndex);
+
+    res.paginatedResults = results;
+    next();
+
   }
 }
 
 router.get('/getsearch', paginatedMacthedResults(), async function (req, res) {
-  let search_value = req.query.search_value;
-  console.log(search_value)
   res.json(res.paginatedResults)
 })
 
@@ -247,166 +233,58 @@ router.post('/gethints', async function (req, res) {
 })
 
 
-// router.get('/login', function (req, res) {
-//   res.render("loginpag", { "loginCheckDet": "", "colorOfSpan": true });
-// })
-// router.post('/checklogin', async function (req, res) {
-
-//   const login_email_value = req.body[0].value;
-//   const login_password_value = req.body[1].value;
-
-//   const userData = dbo.collection("Users").findOne({ userEmail: login_email_value })
-//   const companyData = dbo.collection("Companies").findOne({ companyEmail: login_email_value })
-//   const adminData = dbo.collection("Admins").findOne({ adminEmail: login_email_value });
-
-
-//   let result = await Promise.all([userData, companyData, adminData])
-
-
-//   if (result[0] === null && result[1] == null && result[2] == null) {
-//     res.send("emailNotFound")
-//   }
-//   else if (result[2] != null) {
-//     bcrypt.compare(login_password_value, result[2].adminPassword).then(function (resultOfPasswordComparison) {
-//       if (resultOfPasswordComparison) {
-//         res.send("formSubmitted")
-//       }
-//       else {
-//         res.send("incorrectPassword")
-//       }
-//     })
-//   }
-//   else if (result[0] === null) {
-//     if (result[1].status != "accepted") {
-//       res.send("notApproved")
-//     }
-//     else {
-//       bcrypt.compare(login_password_value, result[1].companyPassword).then(function (resultOfPasswordComparison) {
-//         if (resultOfPasswordComparison) {
-//           res.send("formSubmitted")
-//         }
-//         else {
-//           res.send("incorrectPassword")
-//         }
-//       })
-//     }
-//   }
-//   else if (result[1] === null) {
-
-//     bcrypt.compare(login_password_value, result[0].userPassword).then(function (resultOfPasswordComparison) {
-//       if (resultOfPasswordComparison) {
-//         res.send("formSubmitted")
-//       }
-//       else {
-//         res.send("incorrectPassword")
-//       }
-
-//     })
-
-
-//   }
-
-
-
-
-// });
-// router.post('/validatelogin', async function (req, res) {
-
-
-//   const userData = dbo.collection("Users").findOne({ userEmail: req.body.login_email })
-//   const companyData = dbo.collection("Companies").findOne({ companyEmail: req.body.login_email })
-//   const adminData = dbo.collection("Admins").findOne({ adminEmail: req.body.login_email })
-
-
-
-//   let result = await Promise.all([userData, companyData, adminData])
-
-
-//   if (result[0] === null && result[1] == null && result[2] == null) {
-//     res.render("loginpag", { "loginCheckDet": "Email ID Not Found", "colorOfSpan": true });
-//   }
-//   else if (result[2] != null) {
-//     bcrypt.compare(req.body.login_password, result[2].adminPassword).then(function (resultOfPasswordComparison) {
-//       if (resultOfPasswordComparison) {
-
-//         let jwtSecretKey = process.env.JWT_SECRET_KEY;
-//         let data = {
-//           email: req.body.login_email,
-//           auth: true,
-//           role: "admin",
-//         }
-
-//         const token = jwt.sign(data, jwtSecretKey);
-//         res.cookie("token", token);
-//         res.redirect('/admin?flash=succesfully loggedIn');
-//       }
-//       else {
-//         res.render("loginpag", { "loginCheckDet": "Incorrect Password", "colorOfSpan": true });
-//       }
-//     })
-//   }
-//   else if (result[0] === null) {
-//     if (result[1].status != "accepted") {
-//       res.render("loginpag", { "loginCheckDet": "You are not Approved!", "colorOfSpan": true });
-//     }
-//     else {
-//       bcrypt.compare(req.body.login_password, result[1].companyPassword).then(function (resultOfPasswordComparison) {
-//         if (resultOfPasswordComparison) {
-//           let jwtSecretKey = process.env.JWT_SECRET_KEY;
-//           let data = {
-//             email: req.body.login_email,
-//             auth: true,
-//             role: "company",
-//             companyName: result[1].companyName,
-//           }
-
-//           const token = jwt.sign(data, jwtSecretKey);
-//           res.cookie("token", token);
-//           res.redirect('/?flash=succesfully loggedIn');
-//         }
-//         else {
-//           res.render("loginpag", { "loginCheckDet": "Incorrect Password", "colorOfSpan": true });
-//         }
-//       })
-//     }
-//   }
-//   else if (result[1] === null) {
-
-//     bcrypt.compare(req.body.login_password, result[0].userPassword).then(function (resultOfPasswordComparison) {
-//       if (resultOfPasswordComparison) {
-
-//         let jwtSecretKey = process.env.JWT_SECRET_KEY;
-//         let data = {
-//           email: req.body.login_email,
-//           auth: true,
-//           role: "user",
-//         }
-
-//         const token = jwt.sign(data, jwtSecretKey);
-//         res.cookie("token", token);
-//         res.redirect('/?flash=succesfully loggedIn');
-//       }
-//       else {
-//         res.render("loginpag", { "loginCheckDet": "Incorrect Password", "colorOfSpan": true });
-
-//       }
-
-//     })
-
-
-//   }
-
-
-// });
-// router.get('/logout', function (req, res) {
-//   res.clearCookie("token");
-//   res.redirect("/");
-// })
-
-
-router.get('/logout', function (req, res) {
-  req.logOut();
-  res.redirect("/");
+router.get('/login', function (req, res) {
+  res.render("loginpag", { "loginCheckDet": "", "colorOfSpan": true });
 })
+
+
+
+router.post('/checklogin', async function (req, res) {
+
+  const login_email_value = req.body[0].value;
+  const login_password_value = req.body[1].value;
+
+  const result = await dbo.collection("Credentials").findOne({ emailid: login_email_value });
+
+
+  if (result === null) {
+    res.send("emailNotFound")
+  }
+  else if (!(result.password)) {
+    res.send("noPassword")
+  }
+  else {
+    bcrypt.compare(login_password_value, result.password).then(function (resultOfPasswordComparison) {
+      if (resultOfPasswordComparison) {
+        res.send("formSubmitted")
+      }
+      else {
+        res.send("incorrectPassword")
+      }
+    })
+  }
+
+});
+
+router.get('/view/:id', async (req, res) => {
+
+  try {
+    let data = await dbo.collection("jobsDetails").findOne({ _id: ObjectId(req.params.id) });
+    res.render('jobDetails', { data: data });
+  }
+  catch (error) {
+    res.send(error.message);
+
+  }
+
+
+
+})
+
+
+
+
+
+
 
 module.exports = router;
